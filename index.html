@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Empaque Piña">
+<meta name="theme-color" content="#2d7a3a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍍 Tablero Empaque Piña PRO</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+  :root {
+    --verde: #2d7a3a;
+    --verde-claro: #4caf50;
+    --verde-bg: #e8f5e9;
+    --amarillo: #f9a825;
+    --amarillo-bg: #fff8e1;
+    --rojo: #c62828;
+    --rojo-bg: #ffebee;
+    --azul: #1565c0;
+    --azul-bg: #e3f2fd;
+    --gris: #546e7a;
+    --gris-bg: #eceff1;
+    --texto: #1a2b1a;
+    --fondo: #f5f9f5;
+    --blanco: #ffffff;
+    --borde: #c8e6c9;
+    --sombra: 0 2px 8px rgba(45,122,58,0.10);
+    --radio: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    padding: 0 0 40px 0;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1b5e20 0%, #2d7a3a 60%, #388e3c 100%);
+    color: white;
+    padding: 22px 32px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header h1 span.emoji { font-size: 1.7rem; }
+  .header-meta {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .header-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* BOTONES PRINCIPALES */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radio);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--amarillo);
+    color: #1a1a00;
+    box-shadow: 0 2px 8px rgba(249,168,37,0.30);
+  }
+  .btn-primary:hover { background: #fbc02d; box-shadow: 0 4px 16px rgba(249,168,37,0.45); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.35);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.25); }
+  .btn-outline {
+    background: white;
+    color: var(--verde);
+    border: 1.5px solid var(--borde);
+  }
+  .btn-outline:hover { background: var(--verde-bg); }
+
+  /* MAIN CONTENT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px 20px 0; }
+
+  /* PANEL CONTROL */
+  .control-panel {
+    background: white;
+    border-radius: var(--radio);
+    padding: 20px 24px;
+    margin-bottom: 22px;
+    box-shadow: var(--sombra);
+    border: 1.5px solid var(--borde);
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .control-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+  .control-group label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gris);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .control-group select, .control-group input {
+    padding: 9px 13px;
+    border: 1.5px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    transition: border-color 0.15s;
+  }
+  .control-group select:focus, .control-group input:focus {
+    outline: none;
+    border-color: var(--verde-claro);
+  }
+  .vacaciones-lista {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .vacacion-tag {
+    background: var(--amarillo-bg);
+    border: 1px solid var(--amarillo);
+    color: #5d4037;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .vacacion-tag button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #c62828;
+    padding: 0;
+    line-height: 1;
+  }
+
+  /* DÍA BADGE */
+  .dia-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--verde-bg);
+    border: 1.5px solid var(--borde);
+    color: var(--verde);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  /* SECCIONES */
+  .seccion {
+    background: white;
+    border-radius: var(--radio);
+    margin-bottom: 18px;
+    box-shadow: var(--sombra);
+    border: 1.5px solid var(--borde);
+    overflow: hidden;
+  }
+  .seccion-header {
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1.5px solid var(--borde);
+    background: linear-gradient(90deg, var(--verde-bg), white);
+  }
+  .seccion-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--verde);
+    letter-spacing: -0.2px;
+  }
+  .seccion-icon { font-size: 1.2rem; }
+  .seccion-body { padding: 18px 20px; }
+
+  /* GRID PUESTOS */
+  .puestos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .puesto-card {
+    border-radius: 9px;
+    padding: 13px 14px;
+    border: 2px solid;
+    position: relative;
+    transition: box-shadow 0.15s, transform 0.15s;
+    cursor: default;
+  }
+  .puesto-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-1px); }
+
+  .puesto-card.normal {
+    border-color: var(--borde);
+    background: white;
+  }
+  .puesto-card.pesado {
+    border-color: #ef9a9a;
+    background: #fff5f5;
+  }
+  .puesto-card.fijo {
+    border-color: #90caf9;
+    background: #f0f7ff;
+  }
+  .puesto-card.especial {
+    border-color: #ce93d8;
+    background: #faf0ff;
+  }
+  .puesto-card.vacio {
+    border-color: #ffcc80;
+    background: #fff8f0;
+  }
+
+  .puesto-nombre {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gris);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .puesto-nombre .tipo-badge {
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .badge-pesado { background: #ffcdd2; color: #c62828; }
+  .badge-fijo { background: #bbdefb; color: #1565c0; }
+  .badge-especial { background: #e1bee7; color: #6a1b9a; }
+
+  .puesto-persona {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texto);
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+  }
+  .puesto-persona.mujer { color: #ad1457; }
+  .puesto-persona.hombre { color: #1565c0; }
+  .puesto-persona.vacio { color: #f57c00; font-style: italic; font-weight: 500; }
+
+  .puesto-indicador {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 0.85rem;
+  }
+
+  /* HISTORIAL */
+  .historial-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .historial-tabla th {
+    background: var(--verde-bg);
+    color: var(--verde);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 2px solid var(--borde);
+  }
+  .historial-tabla td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+  .historial-tabla tr:last-child td { border-bottom: none; }
+  .historial-tabla tr:hover td { background: var(--fondo); }
+  .dia-num {
+    font-weight: 700;
+    color: var(--verde);
+    white-space: nowrap;
+  }
+  .historial-resumen {
+    color: var(--gris);
+    line-height: 1.5;
+  }
+
+  /* REGLAS */
+  .reglas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .regla-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.87rem;
+    padding: 7px 10px;
+    border-radius: 7px;
+    background: var(--verde-bg);
+    border-left: 3px solid var(--verde-claro);
+    color: #1b5e20;
+  }
+  .regla-item.advertencia {
+    background: var(--amarillo-bg);
+    border-left-color: var(--amarillo);
+    color: #5d4037;
+  }
+  .regla-icono { font-size: 1rem; flex-shrink: 0; margin-top: 0px; }
+
+  /* PERSONAS DISPONIBLES */
+  .personas-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .persona-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1.5px solid;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .persona-chip.hombre { background: #e3f2fd; border-color: #90caf9; color: #1565c0; }
+  .persona-chip.mujer { background: #fce4ec; border-color: #f48fb1; color: #ad1457; }
+  .persona-chip.vacaciones { background: #fff8e1; border-color: #ffc107; color: #795548; opacity: 0.7; text-decoration: line-through; }
+
+  /* NOTIFICACION */
+  .notif {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border: 2px solid var(--verde-claro);
+    border-radius: var(--radio);
+    padding: 14px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--verde);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    animation: slideIn 0.25s ease;
+    max-width: 320px;
+  }
+  @keyframes slideIn { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: translateX(0); } }
+
+  /* PESTAÑAS PRINCIPALES */
+  .tabs-nav {
+    display: flex;
+    gap: 4px;
+    padding: 0 20px;
+    background: linear-gradient(135deg, #1b5e20 0%, #2d7a3a 100%);
+    border-bottom: 3px solid rgba(255,255,255,0.15);
+  }
+  .tab-btn {
+    padding: 10px 22px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: all 0.2s;
+    border-radius: 6px 6px 0 0;
+  }
+  .tab-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+  .tab-btn.activa { color: white; border-bottom-color: var(--amarillo); background: rgba(255,255,255,0.12); }
+  .tab-content { display: none; }
+  .tab-content.activa { display: block; }
+
+  /* PANEL PERSONAL */
+  .personal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 10px;
+  }
+  .personal-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 18px;
+    border: 2px solid var(--borde);
+    box-shadow: var(--sombra);
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .personal-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
+  .personal-card.alerta-pronto { border-color: #ffa726; background: linear-gradient(135deg, white, #fff8f0); }
+  .personal-card.alerta-hoy    { border-color: #ef5350; background: linear-gradient(135deg, white, #fff5f5); }
+  .personal-card.de-vacaciones { border-color: #42a5f5; background: linear-gradient(135deg, white, #f0f7ff); }
+  .personal-card.nuevo-personal { border-color: #ab47bc; background: linear-gradient(135deg, white, #fdf0ff); }
+
+  .pc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .pc-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+    background: var(--verde-bg); color: var(--verde);
+  }
+  .pc-avatar.mujer { background: #fce4ec; color: #ad1457; }
+  .pc-nombre { font-family: 'Space Grotesk', sans-serif; font-size: 0.97rem; font-weight: 700; color: var(--texto); line-height: 1.2; }
+  .pc-cargo  { font-size: 0.75rem; color: var(--gris); margin-top: 1px; }
+
+  .pc-barra-cont {
+    background: #f0f0f0; border-radius: 20px; height: 8px;
+    margin: 8px 0 6px; overflow: hidden;
+  }
+  .pc-barra {
+    height: 100%; border-radius: 20px;
+    background: linear-gradient(90deg, var(--verde-claro), var(--verde));
+    transition: width 0.5s;
+  }
+  .pc-barra.pronto  { background: linear-gradient(90deg, #ffa726, #fb8c00); }
+  .pc-barra.urgente { background: linear-gradient(90deg, #ef5350, #c62828); }
+  .pc-barra.llena   { background: linear-gradient(90deg, #42a5f5, #1565c0); }
+
+  .pc-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--gris); margin-bottom: 8px; }
+  .pc-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700;
+  }
+  .pc-badge.verde   { background: var(--verde-bg);   color: var(--verde); }
+  .pc-badge.naranja { background: #fff3e0; color: #e65100; }
+  .pc-badge.rojo    { background: #ffebee; color: #c62828; }
+  .pc-badge.azul    { background: #e3f2fd; color: #1565c0; }
+  .pc-badge.morado  { background: #f3e5f5; color: #6a1b9a; }
+  .pc-badge.gris    { background: #eceff1; color: #546e7a; }
+
+  .pc-fechas { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+  .pc-fecha-row { display: flex; justify-content: space-between; font-size: 0.76rem; }
+  .pc-fecha-label { color: var(--gris); }
+  .pc-fecha-val   { font-weight: 600; color: var(--texto); }
+
+  /* REPARTO ESPECIAL */
+  .re-grupo {
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--borde);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .re-grupo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, var(--verde-bg), white);
+    border-bottom: 1.5px solid var(--borde);
+    gap: 10px;
+  }
+  .re-grupo-nombre {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--verde);
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+  }
+  .re-grupo-nombre::placeholder { color: #aaa; font-style: italic; }
+  .re-personas-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 16px;
+    min-height: 60px;
+    align-content: flex-start;
+  }
+  .re-persona-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1.5px solid;
+    cursor: default;
+    transition: all 0.15s;
+  }
+  .re-persona-chip.hombre { background: #e3f2fd; border-color: #90caf9; color: #1565c0; }
+  .re-persona-chip.mujer  { background: #fce4ec; border-color: #f48fb1; color: #ad1457; }
+  .re-persona-chip .re-quitar {
+    background: none; border: none; cursor: pointer;
+    color: #c62828; font-size: 1rem; padding: 0; line-height: 1;
+    opacity: 0.6; transition: opacity 0.15s;
+  }
+  .re-persona-chip .re-quitar:hover { opacity: 1; }
+  .re-add-persona {
+    padding: 5px 10px;
+    border: 1.5px dashed var(--borde);
+    border-radius: 20px;
+    background: none;
+    color: var(--gris);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .re-add-persona:hover { border-color: var(--verde-claro); color: var(--verde); background: var(--verde-bg); }
+  .re-disponibles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 14px 16px;
+    background: var(--fondo);
+    border-top: 1.5px solid var(--borde);
+  }
+  .re-disp-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1.5px solid var(--borde);
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--texto);
+  }
+  .re-disp-chip:hover { background: var(--verde-bg); border-color: var(--verde-claro); color: var(--verde); }
+  .re-disp-chip.asignado { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+  /* REGISTRO VACACIONES */
+  .vac-tabla { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .vac-tabla th { background:var(--verde-bg); color:var(--verde); padding:9px 12px; text-align:left; font-weight:700; font-size:0.75rem; text-transform:uppercase; letter-spacing:.4px; border-bottom:2px solid var(--borde); }
+  .vac-tabla td { padding:9px 12px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+  .vac-tabla tr:last-child td { border-bottom:none; }
+  .vac-tabla tr:hover td { background:var(--fondo); }
+  .estado-chip { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
+  .estado-activo  { background:#e3f2fd; color:#1565c0; }
+  .estado-regreso { background:#e8f5e9; color:#2d7a3a; }
+
+  .alerta-banner {
+    background: linear-gradient(90deg, #ffebee, white);
+    border: 1.5px solid #ef9a9a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #c62828;
+  }
+
+  .filtros-personal {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 18px; align-items: center;
+  }
+  .filtro-chip {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--borde);
+    background: white; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; color: var(--gris);
+  }
+  .filtro-chip:hover, .filtro-chip.activo { background: var(--verde-bg); border-color: var(--verde-claro); color: var(--verde); }
+
+  /* PRINT */
+  @media print {
+    header { background: #2d7a3a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .control-panel, .btn, .header-right { display: none !important; }
+    .seccion { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    body { padding: 0; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 16px; }
+    header h1 { font-size: 1.15rem; }
+    .main { padding: 12px 10px 0; }
+    .puestos-grid { grid-template-columns: repeat(2, 1fr); }
+    .control-panel { flex-direction: column; }
+  }
+</style>
+
+<body>
+
+<header>
+  <div>
+    <h1><span class="emoji">🍍</span> Tablero Empaque Piña PRO</h1>
+    <div class="header-meta" id="fecha-header"></div>
+  </div>
+  <div class="header-right">
+    <span class="dia-badge" id="estado-conexion">⏳ Conectando…</span>
+    <span class="dia-badge" id="dia-badge">📅 Día 1</span>
+    <button class="btn btn-primary" onclick="generarReparto()">⚡ Generar Reparto</button>
+    <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+</header>
+
+<!-- NAVEGACIÓN DE PESTAÑAS -->
+<div class="tabs-nav">
+  <button class="tab-btn activa" onclick="cambiarTab('reparto', this)">⚡ Reparto</button>
+  <button class="tab-btn" onclick="cambiarTab('personal', this)">👥 Personal & Vacaciones</button>
+  <button class="tab-btn" onclick="cambiarTab('especial', this)">⭐ Reparto Especial</button>
+</div>
+
+<!-- PESTAÑA REPARTO -->
+<div id="tab-reparto" class="tab-content activa">
+<div class="main">
+
+  <!-- CONTROL -->
+  <div class="control-panel">
+    <div class="control-group">
+      <label>👤 Agregar persona en vacaciones</label>
+      <select id="select-vacacion" onchange="agregarVacacion()">
+        <option value="">— Seleccionar persona —</option>
+      </select>
+    </div>
+    <div class="control-group" style="flex:2; min-width:260px;">
+      <label>🏖️ En vacaciones hoy</label>
+      <div class="vacaciones-lista" id="vacaciones-lista">
+        <span style="font-size:0.82rem; color:#999; padding:4px 0;">Ninguna persona de vacaciones</span>
+      </div>
+    </div>
+    <div class="control-group" style="flex:0; min-width:auto;">
+      <label>&nbsp;</label>
+      <button class="btn btn-outline" onclick="resetHistorial()">🔄 Reiniciar historial</button>
+    </div>
+  </div>
+
+  <!-- PERSONAL DISPONIBLE -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">👥</span>
+      <h2>Personal disponible</h2>
+    </div>
+    <div class="seccion-body">
+      <div class="personas-grid" id="personas-disponibles-grid"></div>
+    </div>
+  </div>
+
+  <!-- LÍNEA DE EMPAQUE -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">🏭</span>
+      <h2>Línea de empaque</h2>
+    </div>
+    <div class="seccion-body">
+      <div class="puestos-grid" id="grid-empaque"></div>
+    </div>
+  </div>
+
+  <!-- PUESTOS EXTERNOS -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">⚖️</span>
+      <h2>Puestos externos</h2>
+    </div>
+    <div class="seccion-body">
+      <div class="puestos-grid" id="grid-externos"></div>
+    </div>
+  </div>
+
+  <!-- REGLAS -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">📋</span>
+      <h2>Reglas aplicadas</h2>
+    </div>
+    <div class="seccion-body">
+      <div class="reglas-lista" id="reglas-lista">
+        <div class="regla-item"><span class="regla-icono">ℹ️</span> Genera un reparto para ver las reglas aplicadas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GESTIÓN DE PERSONAL -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">👥</span>
+      <h2>Gestión de personal</h2>
+    </div>
+    <div class="seccion-body">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;">
+
+        <!-- Agregar persona -->
+        <div style="flex:1;min-width:240px;">
+          <p style="font-size:0.8rem;font-weight:700;color:#546e7a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">➕ Ingresar persona nueva</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input id="nuevo-nombre" type="text" placeholder="Nombre completo" maxlength="60"
+              style="padding:9px 12px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.92rem;font-family:inherit;">
+            <select id="nuevo-genero"
+              style="padding:9px 12px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.92rem;font-family:inherit;background:#f5f9f5;">
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+            </select>
+            <label style="font-size:0.75rem;font-weight:700;color:#546e7a;text-transform:uppercase;">Fecha de ingreso</label>
+            <input id="nuevo-fecha" type="date" style="padding:8px 12px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.92rem;font-family:inherit;">
+            <label style="font-size:0.75rem;font-weight:700;color:#546e7a;text-transform:uppercase;">Días sin Guapita, Tercera y Pedidos (0 = sin restricción)</label>
+            <input id="nuevo-restriccion" type="number" min="0" max="365" value="30" style="padding:8px 12px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.92rem;font-family:inherit;">
+            <button class="btn btn-primary" onclick="agregarPersonal()" style="justify-content:center;">✅ Agregar al equipo</button>
+          </div>
+        </div>
+
+        <!-- Retirar persona -->
+        <div style="flex:1;min-width:240px;">
+          <p style="font-size:0.8rem;font-weight:700;color:#546e7a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">🚪 Retirar persona</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <select id="select-retirar"
+              style="padding:9px 12px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.92rem;font-family:inherit;background:#f5f9f5;">
+              <option value="">— Seleccionar persona —</option>
+            </select>
+            <button class="btn" onclick="retirarPersonal()"
+              style="justify-content:center;background:#fff5f5;border:1.5px solid #ef9a9a;color:#c62828;font-weight:600;">🚪 Retirar del equipo</button>
+          </div>
+          <p style="font-size:0.78rem;color:#999;margin-top:8px;">* Al retirar a alguien se elimina definitivamente. Los fijos (Plutarco, Monzon) no se retiran desde aquí.</p>
+        </div>
+
+        <!-- Lista actual -->
+        <div style="flex:2;min-width:280px;">
+          <p style="font-size:0.8rem;font-weight:700;color:#546e7a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">📋 Equipo actual</p>
+          <div id="equipo-actual" style="display:flex;flex-wrap:wrap;gap:7px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESPALDO -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">💾</span>
+      <h2>Respaldo de datos</h2>
+    </div>
+    <div class="seccion-body">
+      <p style="font-size:0.85rem;color:var(--gris);margin-bottom:12px;">Descarga un archivo con todo el personal, historial y vacaciones. Guárdalo de vez en cuando (por ejemplo, cada semana). Si algún día se daña algo, lo restauras aquí.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="descargarRespaldo()">⬇️ Descargar respaldo</button>
+        <button class="btn btn-outline" onclick="document.getElementById('archivo-respaldo').click()">⬆️ Restaurar respaldo</button>
+        <input type="file" id="archivo-respaldo" accept="application/json,.json" style="display:none" onchange="restaurarRespaldo(this)">
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">📜</span>
+      <h2>Historial de repartos</h2>
+    </div>
+    <div class="seccion-body">
+      <div id="historial-contenido">
+        <p style="color:#999; font-size:0.87rem;">Aún no se han generado repartos.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /main reparto -->
+</div><!-- /tab-reparto -->
+
+<!-- PESTAÑA PERSONAL & VACACIONES -->
+<div id="tab-personal" class="tab-content">
+<div class="main">
+
+  <!-- ALERTAS DE VACACIONES -->
+  <div id="alertas-vacaciones-banner"></div>
+
+  <!-- FILTROS -->
+  <div class="filtros-personal">
+    <span style="font-size:0.8rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.4px;">Filtrar:</span>
+    <button class="filtro-chip activo" onclick="filtrarPersonal('todos',this)">👥 Todos</button>
+    <button class="filtro-chip" onclick="filtrarPersonal('alerta',this)">🔔 Con alerta</button>
+    <button class="filtro-chip" onclick="filtrarPersonal('vacaciones',this)">🏖️ De vacaciones</button>
+    <button class="filtro-chip" onclick="filtrarPersonal('nuevos',this)">🆕 Período restricción</button>
+    <button class="filtro-chip" onclick="filtrarPersonal('hombres',this)">👨 Hombres</button>
+    <button class="filtro-chip" onclick="filtrarPersonal('mujeres',this)">👩 Mujeres</button>
+    <input type="text" placeholder="🔍 Buscar persona..." oninput="buscarPersonal(this.value)"
+      style="padding:6px 12px;border:1.5px solid var(--borde);border-radius:20px;font-size:0.83rem;font-family:inherit;width:180px;">
+  </div>
+
+  <!-- RESUMEN RÁPIDO -->
+  <div id="resumen-personal" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;"></div>
+
+  <!-- GRID DE TARJETAS -->
+  <div class="personal-grid" id="personal-grid">
+    <p style="color:#999;font-size:0.87rem;">Cargando personal...</p>
+  </div>
+
+  <!-- REGISTRO DE PERÍODOS DE VACACIONES -->
+  <div class="seccion" style="margin-top:20px;">
+    <div class="seccion-header">
+      <span class="seccion-icon">🏖️</span>
+      <h2>Registro de períodos de vacaciones</h2>
+    </div>
+    <div class="seccion-body">
+
+      <!-- Formulario de salida -->
+      <div style="background:var(--verde-bg);border-radius:10px;padding:16px 18px;margin-bottom:18px;border:1.5px solid var(--borde);">
+        <p style="font-size:0.8rem;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;">📤 Registrar salida a vacaciones</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Persona</label>
+            <select id="sel-vac-persona" style="padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;background:white;min-width:200px;"></select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Fecha de salida</label>
+            <input type="date" id="input-vac-salida" style="padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Fecha de regreso (calculada)</label>
+            <div id="fecha-regreso-calculada" style="padding:8px 14px;border-radius:8px;background:white;border:1.5px solid var(--borde);font-size:0.9rem;font-weight:700;color:var(--verde);min-width:160px;">— Selecciona fecha —</div>
+          </div>
+          <button class="btn btn-primary" onclick="registrarSalidaVacaciones()">✅ Registrar salida</button>
+        </div>
+        <p style="font-size:0.75rem;color:var(--gris);margin-top:10px;">* La salida cuenta como el primer día de vacaciones. Se cuentan 15 días hábiles (lunes a sábado, sin domingos ni festivos de Colombia) y el regreso es el día hábil número 15 después de la salida.</p>
+      </div>
+
+      <!-- Tabla de registros -->
+      <div id="tabla-vacaciones-cont">
+        <p style="color:#999;font-size:0.87rem;">No hay registros de vacaciones aún.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EDITAR DATOS DE UNA PERSONA -->
+  <div class="seccion" style="margin-top:20px;">
+    <div class="seccion-header">
+      <span class="seccion-icon">✏️</span>
+      <h2>Editar datos de una persona</h2>
+    </div>
+    <div class="seccion-body">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Persona</label>
+          <select id="sel-persona-fecha" onchange="cargarEditorPersona()" style="padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;background:var(--fondo);min-width:200px;"></select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Fecha de ingreso</label>
+          <input type="date" id="input-fecha-ingreso" style="padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Días de restricción</label>
+          <input type="number" id="input-restr-dias" min="0" max="365" style="width:110px;padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <label style="font-size:0.78rem;font-weight:700;color:var(--gris);text-transform:uppercase;">Restricción desde</label>
+          <input type="date" id="input-restr-desde" style="padding:8px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;">
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:0.85rem;font-weight:600;color:#c62828;padding-bottom:9px;">
+          <input type="checkbox" id="chk-vencidas"> Vacaciones vencidas
+        </label>
+        <button class="btn btn-primary" onclick="guardarEditorPersona()">💾 Guardar cambios</button>
+      </div>
+      <p style="font-size:0.77rem;color:#999;margin-top:8px;">* La fecha de ingreso a la empresa determina cuándo corresponden las vacaciones. "Vacaciones vencidas" se marca a mano y se quita sola cuando registras su regreso de vacaciones. La restricción bloquea Guapita, Tercera y Pedidos Especiales durante esos días calendario.</p>
+    </div>
+  </div>
+
+</div>
+</div><!-- /tab-personal -->
+
+<!-- PESTAÑA REPARTO ESPECIAL -->
+<div id="tab-especial" class="tab-content">
+<div class="main">
+
+  <!-- ENCABEZADO -->
+  <div style="background:white;border-radius:var(--radio);padding:18px 22px;margin-bottom:18px;box-shadow:var(--sombra);border:1.5px solid var(--borde);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+    <div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--verde);margin-bottom:4px;">⭐ Reparto Especial</h2>
+      <p style="font-size:0.83rem;color:var(--gris);">Para días sin empaque completo: asigna el personal a grupos de trabajo personalizados.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input type="text" id="re-titulo" placeholder="Ej: Martes 2 de julio — Día de aseo" 
+        style="padding:8px 14px;border:1.5px solid var(--borde);border-radius:8px;font-size:0.9rem;font-family:inherit;min-width:280px;">
+      <button class="btn btn-primary" onclick="imprimirRepartoEspecial()">🖨️ Imprimir / Compartir</button>
+      <button class="btn btn-outline" onclick="limpiarRepartoEspecial()">🔄 Limpiar todo</button>
+    </div>
+  </div>
+
+  <!-- GRUPOS -->
+  <div id="re-grupos-cont"></div>
+
+  <!-- BOTÓN AGREGAR GRUPO -->
+  <button onclick="agregarGrupoEspecial()" 
+    style="width:100%;padding:14px;border:2px dashed var(--borde);border-radius:12px;background:white;color:var(--gris);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:18px;"
+    onmouseover="this.style.borderColor='var(--verde-claro)';this.style.color='var(--verde)';this.style.background='var(--verde-bg)'"
+    onmouseout="this.style.borderColor='var(--borde)';this.style.color='var(--gris)';this.style.background='white'">
+    ➕ Agregar grupo de trabajo
+  </button>
+
+  <!-- PERSONAL DISPONIBLE -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-icon">👥</span>
+      <h2>Personal disponible <span id="re-contador-disp" style="font-size:0.8rem;font-weight:400;color:var(--gris);"></span></h2>
+    </div>
+    <div class="seccion-body">
+      <p style="font-size:0.78rem;color:var(--gris);margin-bottom:10px;">Haz clic en una persona para agregarla al grupo seleccionado (el último grupo activo).</p>
+      <div class="re-disponibles-grid" id="re-disponibles"></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /tab-especial -->
+
+
+<!-- NOTIFICACIÓN -->
+<div class="notif" id="notif" style="display:none;"></div>
+
+<script>
+// ===================== CONSTANTES =====================
+// Fijos de clasificación (si están de vacaciones los reemplaza otro hombre)
+const FIJOS_CLASIFICACION = ['Plutarco Sandoval', 'Jose Monzon'];
+const BLOQUEADOS_PESO = []; // sin restricciones individuales de peso actualmente
+// Puestos vetados para personal nuevo durante su período de restricción
+const PUESTOS_BLOQUEADOS_NUEVOS = ['guapita', 'tercera', 'pedido1', 'pedido2'];
+
+const PUESTOS_EMPAQUE = [
+  { id:'afuera_guapita', nombre:'Afuera (Guapita)',              tipo:'normal',  soloHombres:false },
+  { id:'pedido1',        nombre:'Pedido Especial Éxito',         tipo:'especial',soloHombres:false },
+  { id:'primera1',       nombre:'Primera 1',                     tipo:'normal',  soloHombres:false },
+  { id:'primera2',       nombre:'Primera 2',                     tipo:'normal',  soloHombres:false },
+  { id:'primera3',       nombre:'Primera 3',                     tipo:'normal',  soloHombres:false },
+  { id:'primera4',       nombre:'Primera 4',                     tipo:'normal',  soloHombres:false },
+  { id:'apoyo_exito',    nombre:'Apoyo en Primera',   tipo:'normal',  soloHombres:false },
+  { id:'guapita',        nombre:'Guapita',                       tipo:'pesado',  soloHombres:true  },
+  { id:'tercera',        nombre:'Tercera',                       tipo:'pesado',  soloHombres:true  },
+  { id:'segunda1',       nombre:'Segunda 1',                     tipo:'normal',  soloHombres:false },
+  { id:'segunda2',       nombre:'Segunda 2',                     tipo:'normal',  soloHombres:false },
+  { id:'segunda3',       nombre:'Segunda 3',                     tipo:'normal',  soloHombres:false },
+  { id:'segunda4',       nombre:'Segunda 4',                     tipo:'normal',  soloHombres:false },
+  { id:'apoyo_ara',      nombre:'Apoyo en Segunda',     tipo:'normal',  soloHombres:false },
+  { id:'pedido2',        nombre:'Pedido Especial Ara',           tipo:'especial',soloHombres:false },
+  { id:'afuera_baby',    nombre:'Afuera (Baby)',                 tipo:'normal',  soloHombres:false },
+  { id:'pileta',         nombre:'Pileta',                        tipo:'pesado',  soloHombres:true  },
+];
+
+const PUESTOS_EXTERNOS = [
+  { id:'clas1',  nombre:'Clasificación 1', tipo:'fijo',   soloHombres:true,  persona:'Plutarco Sandoval' },
+  { id:'clas2',  nombre:'Clasificación 2', tipo:'fijo',   soloHombres:true,  persona:'Jose Monzon' },
+  { id:'peso1',  nombre:'Peso 1',          tipo:'pesado', soloHombres:true,  persona:null },
+  { id:'peso2',  nombre:'Peso 2',          tipo:'pesado', soloHombres:true,  persona:null },
+  { id:'lavado', nombre:'Lavado Canastas', tipo:'pesado', soloHombres:true,  persona:null },
+];
+
+
+
+// Personal inicial: SOLO se usa la primera vez para llenar la base de datos.
+// Después el personal vive en Firebase y se maneja desde el tablero.
+const SEED_PERSONAS = [
+  { nombre: 'Plutarco Sandoval', genero: 'hombre', fijo: true },
+  { nombre: 'Jose Monzon', genero: 'hombre', fijo: true, fechaIngreso: '2022-07-23' },
+  { nombre: 'Carlos Mario', genero: 'hombre' },
+  { nombre: 'Fredy Perez', genero: 'hombre', fechaIngreso: '2023-02-12' },
+  { nombre: 'Cesar Varela', genero: 'hombre', fechaIngreso: '2022-01-18' },
+  { nombre: 'Yeison Ortiz', genero: 'hombre', fechaIngreso: '2022-08-23', vencidas: true },
+  { nombre: 'Santiago Tobon', genero: 'hombre', fechaIngreso: '2025-01-14' },
+  { nombre: 'Javier Posso', genero: 'hombre' },
+  { nombre: 'Sneider Hurtado', genero: 'hombre' },
+  { nombre: 'Kevin Narvaez', genero: 'hombre', fechaIngreso: '2024-04-11' },
+  { nombre: 'Adrian Viloria', genero: 'hombre', fechaIngreso: '2025-06-20' },
+  { nombre: 'Jhon Fredy Murillo', genero: 'hombre', vencidas: true },
+  { nombre: 'Daniel Martinez', genero: 'hombre', fechaIngreso: '2024-05-16' },
+  { nombre: 'Jhon Hoyos', genero: 'hombre', fechaIngreso: '2025-09-16' },
+  { nombre: 'Johan Palacios', genero: 'hombre', fechaIngreso: '2025-09-11' },
+  { nombre: 'Cristian Sanches', genero: 'hombre', restriccionDias: 20, restriccionDesde: '2026-09-29' },
+  { nombre: 'Daniel Carlos Herrera', genero: 'hombre', fechaIngreso: '2026-07-27', restriccionDias: 20, restriccionDesde: '2026-09-29' },
+  { nombre: 'Javier Ramos', genero: 'hombre' },
+  { nombre: 'Wilson Cordoba', genero: 'hombre', fechaIngreso: '2024-12-10' },
+  { nombre: 'Berta Murillo', genero: 'mujer', fechaIngreso: '2025-04-15' },
+  { nombre: 'Blanca Cardozo', genero: 'mujer', fechaIngreso: '2024-09-10', vencidas: true },
+];
+function seedCompleto(p) {
+  return {
+    nombre: p.nombre, genero: p.genero, fijo: !!p.fijo,
+    fechaIngreso: p.fechaIngreso || '', vencidas: !!p.vencidas,
+    restriccionDias: p.restriccionDias || 0, restriccionDesde: p.restriccionDesde || ''
+  };
+}
+
+// ===================== ESTADO (espejo en memoria de Firebase) =====================
+const estado = {
+  listo: false,
+  dia: 0,
+  vacManual: [],          // vacaciones puestas a mano en la pestaña Reparto
+  historial: [],          // repartos, del más antiguo al más nuevo
+  colasTurno: {},
+  personas: [],           // [{nombre, genero, fijo, fechaIngreso, vencidas, restriccionDias, restriccionDesde, orden}]
+  registroVacaciones: [], // [{id, nombre, salida, regreso, estado}]
+  especial: null
+};
+
+// ===================== UTILIDADES =====================
+function aISO(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function hoyISO() { return aISO(new Date()); }
+function fechaDe(iso) { return new Date(iso + 'T12:00:00'); }
+function fmtFecha(d, largo) {
+  return d.toLocaleDateString('es-CO', largo
+    ? { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }
+    : { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+function limpiarNombre(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+function mezclar(arr) { // Fisher-Yates
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function personaPor(nombre) { return estado.personas.find(p => p.nombre === nombre); }
+function hombresVigentes() { return estado.personas.filter(p => p.genero === 'hombre').map(p => p.nombre); }
+function mujeresVigentes() { return estado.personas.filter(p => p.genero === 'mujer').map(p => p.nombre); }
+function todasVigentes() { return estado.personas.map(p => p.nombre); }
+function retiradosVigentes() { return []; } // compatibilidad: ya no hay "retirados", se borran
+
+function seguro(nombre, fn) { try { fn(); } catch (e) { console.warn('Error en ' + nombre + ':', e); } }
+
+// Llama a Firebase sin bloquear la pantalla (la UI se actualiza sola con los listeners)
+function fb(metodo, ...args) {
+  if (!window.FB) {
+    mostrarNotifError('⏳ Conectando con la base de datos… intenta en unos segundos.');
+    return Promise.resolve();
+  }
+  try {
+    return Promise.resolve(window.FB[metodo](...args)).catch(e => {
+      console.error(e);
+      mostrarNotifError('⚠️ No se pudo guardar: ' + (e.code || e.message || e));
+    });
+  } catch (e) {
+    console.error(e);
+    mostrarNotifError('⚠️ No se pudo guardar: ' + (e.code || e.message || e));
+    return Promise.resolve();
+  }
+}
+
+// ===================== NOTIFICACIONES =====================
+function mostrarNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.style.borderColor = '';
+  el.style.color = '';
+  el.style.display = 'flex';
+  clearTimeout(window._notifTimer);
+  window._notifTimer = setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+function mostrarNotifError(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.style.borderColor = '#ef9a9a';
+  el.style.color = '#c62828';
+  el.style.display = 'flex';
+  clearTimeout(window._notifTimer);
+  window._notifTimer = setTimeout(() => { el.style.display = 'none'; el.style.borderColor = ''; el.style.color = ''; }, 6000);
+}
+
+// ===================== CONEXIÓN / ARRANQUE =====================
+function setConexion(tipo) {
+  const el = document.getElementById('estado-conexion');
+  if (!el) return;
+  const m = { ok: '☁️ Sincronizado', conectando: '⏳ Conectando…', offline: '📵 Sin conexión', error: '⚠️ Sin acceso a datos' };
+  el.textContent = m[tipo] || m.conectando;
+}
+window.addEventListener('online', () => setConexion('ok'));
+window.addEventListener('offline', () => setConexion('offline'));
+
+let _renderPendiente = false;
+function pedirRender() {
+  if (_renderPendiente) return;
+  _renderPendiente = true;
+  setTimeout(() => { _renderPendiente = false; renderTodo(); }, 30);
+}
+
+function iniciarApp() {
+  if (window.__appIniciada) return;
+  window.__appIniciada = true;
+  clearTimeout(window.__timerFB);
+  setConexion('conectando');
+  window.FB.iniciar({
+    personas: (lista, meta) => {
+      estado.personas = lista.sort((a, b) => ((a.orden ?? 999) - (b.orden ?? 999)) || a.nombre.localeCompare(b.nombre));
+      estado.listo = true;
+      setConexion(meta && meta.fromCache && !navigator.onLine ? 'offline' : 'ok');
+      pedirRender();
+    },
+    estado: (d) => {
+      estado.dia = d.dia || 0;
+      estado.vacManual = d.vacManual || [];
+      estado.colasTurno = d.colasTurno || {};
+      pedirRender();
+    },
+    historial: (lista) => { estado.historial = lista; pedirRender(); },
+    vacaciones: (lista) => { estado.registroVacaciones = lista.sort((a, b) => (a.salida < b.salida ? -1 : 1)); pedirRender(); },
+    especial: (d) => { estado.especial = d; reDesdeEstado(); pedirRender(); },
+    error: (e) => {
+      console.error(e);
+      setConexion('error');
+      mostrarNotifError('⚠️ Error con la base de datos: ' + (e.code || e.message || e));
+    }
+  }, SEED_PERSONAS.map(seedCompleto));
+}
+window.iniciarApp = iniciarApp;
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTodo();
+  if (window.FB) iniciarApp();
+  window.__timerFB = setTimeout(() => {
+    if (!window.FB) {
+      setConexion('error');
+      mostrarNotifError('⚠️ No se pudo cargar Firebase. Revisa tu internet y recarga la página.');
+    }
+  }, 12000);
+  const inputFecha = document.getElementById('input-vac-salida');
+  if (inputFecha) { inputFecha.value = hoyISO(); inputFecha.addEventListener('change', calcularRegresoPreview); calcularRegresoPreview(); }
+  const nf = document.getElementById('nuevo-fecha');
+  if (nf) nf.value = hoyISO();
+});
+
+// ===================== VACACIONES DEL DÍA =====================
+// "De vacaciones hoy" = lista manual + períodos registrados cuya salida ya llegó y aún no marcan regreso
+function registrosActivosHoy() {
+  const h = hoyISO();
+  return estado.registroVacaciones.filter(r => r.estado === 'activo' && r.salida <= h);
+}
+function vacacionesHoyLista() {
+  const existen = new Set(todasVigentes());
+  const set = new Set(estado.vacManual.filter(n => existen.has(n)));
+  registrosActivosHoy().forEach(r => { if (existen.has(r.nombre)) set.add(r.nombre); });
+  return [...set];
+}
+function enVacacionesHoy(nombre) { return vacacionesHoyLista().includes(nombre); }
+
+function llenarSelect(id, items, placeholder) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = `<option value="">${placeholder}</option>` +
+    items.map(i => `<option value="${escAttr(i.value)}">${i.label}</option>`).join('');
+  if (prev && items.some(i => i.value === prev)) sel.value = prev;
+}
+
+function actualizarFecha() {
+  document.getElementById('fecha-header').textContent = fmtFecha(new Date(), true);
+  document.getElementById('dia-badge').textContent = `📅 Día ${estado.dia}`;
+}
+
+function poblarSelectVacaciones() {
+  const enVac = new Set(vacacionesHoyLista());
+  llenarSelect('select-vacacion',
+    todasVigentes().filter(p => !enVac.has(p)).map(p => ({
+      value: p,
+      label: p + (hombresVigentes().includes(p) ? ' (H)' : ' (M)') + (FIJOS_CLASIFICACION.includes(p) ? ' 📌' : '')
+    })), '— Seleccionar persona —');
+}
+
+function agregarVacacion() {
+  const sel = document.getElementById('select-vacacion');
+  const persona = sel.value;
+  if (!persona) return;
+  fb('vacAgregar', persona);
+  sel.value = '';
+}
+function quitarVacacion(nombre) {
+  const reg = registrosActivosHoy().find(r => r.nombre === nombre);
+  if (reg) {
+    if (!confirm(`${nombre} tiene un período de vacaciones registrado.\n¿Marcar que ya regresó?`)) return;
+    marcarRegreso(reg.id);
+    return;
+  }
+  fb('vacQuitar', nombre);
+}
+function renderVacaciones() {
+  const cont = document.getElementById('vacaciones-lista');
+  const lista = vacacionesHoyLista();
+  if (lista.length === 0) {
+    cont.innerHTML = '<span style="font-size:0.82rem; color:#999; padding:4px 0;">Ninguna persona de vacaciones</span>';
+    return;
+  }
+  cont.innerHTML = lista.map(p =>
+    `<div class="vacacion-tag">🏖️ ${p} <button onclick="quitarVacacion('${p}')" title="Quitar de vacaciones">✕</button></div>`
+  ).join('');
+}
+
+function renderPersonasDisponibles() {
+  const cont = document.getElementById('personas-disponibles-grid');
+  if (!cont) return;
+  const enVac = new Set(vacacionesHoyLista());
+  const hs = hombresVigentes();
+  if (estado.personas.length === 0) {
+    cont.innerHTML = '<span style="color:#999;font-size:0.82rem;">' + (estado.listo ? 'No hay personal registrado.' : 'Cargando personal…') + '</span>';
+    return;
+  }
+  cont.innerHTML = estado.personas.map(pp => {
+    const p = pp.nombre;
+    const esVac = enVac.has(p);
+    const esH = hs.includes(p);
+    const esFijo = FIJOS_CLASIFICACION.includes(p);
+    const clase = esVac ? 'vacaciones' : (esH ? 'hombre' : 'mujer');
+    const icono = esVac ? '🏖️' : (esFijo ? '📌' : (esH ? '👨' : '👩'));
+    return `<div class="persona-chip ${clase}">${icono} ${p}</div>`;
+  }).join('');
+}
+
+// ===================== PUESTOS =====================
+function renderPuestosVacios() {
+  const vacios = {};
+  [...PUESTOS_EMPAQUE, ...PUESTOS_EXTERNOS].forEach(p => vacios[p.id] = null);
+  vacios.clas1 = FIJOS_CLASIFICACION[0];
+  vacios.clas2 = FIJOS_CLASIFICACION[1];
+  renderAsignaciones(vacios);
+}
+function renderAsignaciones(asignaciones) {
+  document.getElementById('grid-empaque').innerHTML =
+    PUESTOS_EMPAQUE.map(p => cardHTML(p, asignaciones[p.id])).join('');
+  document.getElementById('grid-externos').innerHTML =
+    PUESTOS_EXTERNOS.map(p => cardHTML(p, asignaciones[p.id])).join('');
+}
+function cardHTML(puesto, persona) {
+  const esHombre = persona && hombresVigentes().includes(persona);
+  const generoClass = persona ? (esHombre ? 'hombre' : 'mujer') : 'vacio';
+  const textoPersona = persona || '— Sin asignar —';
+  const tipoClass = puesto.tipo === 'pesado' ? 'pesado' :
+    puesto.tipo === 'fijo' ? 'fijo' :
+      puesto.tipo === 'especial' ? 'especial' : 'normal';
+  return `
+    <div class="puesto-card ${tipoClass}">
+      <div class="puesto-nombre">${puesto.nombre}</div>
+      <div class="puesto-persona ${generoClass}">${textoPersona}</div>
+    </div>`;
+}
+function renderReglas(reglas) {
+  const cont = document.getElementById('reglas-lista');
+  if (!reglas || reglas.length === 0) {
+    cont.innerHTML = '<div class="regla-item"><span class="regla-icono">ℹ️</span> Genera un reparto para ver las reglas aplicadas.</div>';
+    return;
+  }
+  cont.innerHTML = reglas.map(r =>
+    `<div class="regla-item ${r.tipo === 'warn' ? 'advertencia' : ''}">
+      <span class="regla-icono">${r.tipo === 'warn' ? '⚠️' : '✅'}</span>
+      ${r.texto}
+    </div>`).join('');
+}
+
+// ===================== COLAS DE TURNO =====================
+let _colas = {}; // copia de trabajo durante un reparto
+function getElegiblesPesados() {
+  const hombres = hombresVigentes();
+  return {
+    pesos: hombres.filter(p => !FIJOS_CLASIFICACION.includes(p) && !BLOQUEADOS_PESO.includes(p)),
+    lavado: hombres.filter(p => !FIJOS_CLASIFICACION.includes(p)),
+    pileta: hombres.filter(p => !FIJOS_CLASIFICACION.includes(p)),
+    guapita: hombres.filter(p => !FIJOS_CLASIFICACION.includes(p)),
+    tercera: hombres.filter(p => !FIJOS_CLASIFICACION.includes(p)),
+  };
+}
+// La cola indica quién sigue (índice 0). Quien trabaja va al final.
+// Si alguien no está disponible se salta sin perder su posición.
+function obtenerCola(puestoId) {
+  const elegibles = getElegiblesPesados()[puestoId] || [];
+  if (!_colas[puestoId] || _colas[puestoId].length === 0) {
+    _colas[puestoId] = mezclar([...elegibles]);
+  } else {
+    elegibles.forEach(p => { if (!_colas[puestoId].includes(p)) _colas[puestoId].push(p); });
+    _colas[puestoId] = _colas[puestoId].filter(p => elegibles.includes(p));
+  }
+  return _colas[puestoId];
+}
+function siguienteDeCola(puestoId, disponiblesHoy, yaUsados) {
+  const cola = obtenerCola(puestoId);
+  const idx = cola.findIndex(p => disponiblesHoy.includes(p) && !yaUsados.has(p));
+  if (idx === -1) return null;
+  const persona = cola[idx];
+  cola.splice(idx, 1);
+  cola.push(persona);
+  return persona;
+}
+function siguienteParejaDeCola(puestoId, disponiblesHoy, yaUsados) {
+  const cola = obtenerCola(puestoId);
+  const pareja = [];
+  const indices = [];
+  for (let i = 0; i < cola.length && pareja.length < 2; i++) {
+    const p = cola[i];
+    if (disponiblesHoy.includes(p) && !yaUsados.has(p)) { pareja.push(p); indices.push(i); }
+  }
+  for (let i = indices.length - 1; i >= 0; i--) {
+    const persona = cola.splice(indices[i], 1)[0];
+    cola.push(persona);
+  }
+  return pareja;
+}
+
+// ===================== RESTRICCIÓN PERSONAL NUEVO =====================
+function diasRestriccionRestantes(nombre) {
+  const p = personaPor(nombre);
+  if (!p || !p.restriccionDias || !p.restriccionDesde) return 0;
+  const desde = fechaDe(p.restriccionDesde); desde.setHours(0, 0, 0, 0);
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const transcurridos = Math.floor((hoy - desde) / 86400000);
+  return Math.max(0, p.restriccionDias - transcurridos);
+}
+function esPersonaNueva(nombre) { return diasRestriccionRestantes(nombre) > 0; }
+function puedeIrAPuesto(persona, puestoId) {
+  if (esPersonaNueva(persona) && PUESTOS_BLOQUEADOS_NUEVOS.includes(puestoId)) return false;
+  return true;
+}
+
+// ===================== ALGORITMO DE REPARTO =====================
+// Orden de rotación: Afuera Guapita → Pedido Éxito → Primera 1-4 → Apoyo en Primera →
+// Guapita → Tercera → Segunda 1-4 → Apoyo en Segunda → Pedido Ara → Afuera Baby → Pileta
+// Si falta personal se sacrifica: 1° Lavado, 2° Apoyo en Primera, 3° Apoyo en Segunda.
+function generarReparto() {
+  if (!estado.listo || estado.personas.length === 0) {
+    mostrarNotifError('⏳ Aún se está cargando el personal. Espera un momento e intenta de nuevo.');
+    return;
+  }
+  _colas = JSON.parse(JSON.stringify(estado.colasTurno || {}));
+
+  const vacHoy = new Set(vacacionesHoyLista());
+  const disponibles = todasVigentes().filter(p => !vacHoy.has(p) && !FIJOS_CLASIFICACION.includes(p));
+  if (disponibles.length < 15) {
+    mostrarNotif(`⚠️ Solo hay ${disponibles.length} personas disponibles. Mínimo 15 recomendado.`);
+  }
+
+  const hVigentes = hombresVigentes();
+  const asignaciones = {};
+  const reglas = [];
+  const usados = new Set();
+  const hombresDisp = disponibles.filter(p => hVigentes.includes(p));
+
+  // ── 1. CLASIFICACIÓN ── fijos; si faltan, los reemplaza cualquier hombre disponible
+  const slots = [['clas1', FIJOS_CLASIFICACION[0], 'Clasificación 1'], ['clas2', FIJOS_CLASIFICACION[1], 'Clasificación 2']];
+  let fijosPresentes = true;
+  slots.forEach(([slot, nombre, etiqueta]) => {
+    if (personaPor(nombre) && !vacHoy.has(nombre)) {
+      asignaciones[slot] = nombre;
+      usados.add(nombre);
+    } else {
+      fijosPresentes = false;
+      const candidatos = mezclar(hombresDisp.filter(p => !usados.has(p)));
+      const reemplazo = candidatos[0];
+      if (reemplazo) { asignaciones[slot] = reemplazo; usados.add(reemplazo); }
+      reglas.push({ texto: `${nombre} de vacaciones — reemplazado en ${etiqueta} por ${reemplazo || 'nadie (sin reemplazo)'}.`, tipo: 'warn' });
+    }
+  });
+  if (fijosPresentes) {
+    reglas.push({ texto: `${FIJOS_CLASIFICACION[0]} (Clas. 1) y ${FIJOS_CLASIFICACION[1]} (Clas. 2) presentes — puestos fijos cubiertos.`, tipo: 'ok' });
+  }
+
+  // ── 2. PESOS ── turno estricto en pareja
+  const parejaPesos = siguienteParejaDeCola('pesos', hombresDisp, usados);
+  if (parejaPesos.length >= 1) { asignaciones['peso1'] = parejaPesos[0]; usados.add(parejaPesos[0]); }
+  if (parejaPesos.length >= 2) { asignaciones['peso2'] = parejaPesos[1]; usados.add(parejaPesos[1]); }
+  if (parejaPesos.length >= 2) {
+    reglas.push({ texto: `Peso 1: ${parejaPesos[0]} · Peso 2: ${parejaPesos[1]} — turno estricto en pareja.`, tipo: 'ok' });
+  } else {
+    reglas.push({ texto: 'No hay suficientes hombres para puestos de peso.', tipo: 'warn' });
+  }
+
+  // ── 3. PUESTOS SACRIFICABLES SEGÚN PERSONAL ──
+  const libresParaLinea = disponibles.filter(p => !usados.has(p)).length;
+  const excedenteLinea = libresParaLinea - 15; // 15 puestos obligatorios de línea
+  const asignarApoyoSegunda = excedenteLinea >= 1;
+  const asignarApoyoPrimera = excedenteLinea >= 2;
+  const asignarLavado = excedenteLinea >= 3;
+
+  if (asignarLavado) {
+    const personaLavado = siguienteDeCola('lavado', hombresDisp, usados);
+    if (personaLavado) {
+      asignaciones['lavado'] = personaLavado;
+      usados.add(personaLavado);
+      reglas.push({ texto: `Lavado Canastas: ${personaLavado} (turno estricto).`, tipo: 'ok' });
+    }
+  } else {
+    reglas.push({ texto: `Lavado Canastas omitido — personal insuficiente (1° en sacrificarse). Disponibles: ${libresParaLinea}, se necesitan 18.`, tipo: 'warn' });
+  }
+  if (!asignarApoyoPrimera) reglas.push({ texto: 'Apoyo en Primera omitido — personal insuficiente (2° en sacrificarse).', tipo: 'warn' });
+  if (!asignarApoyoSegunda) reglas.push({ texto: 'Apoyo en Segunda omitido — personal insuficiente (3° en sacrificarse).', tipo: 'warn' });
+
+  // ── 4. SECUENCIA DE LÍNEA ──
+  const SECUENCIA_LINEA = [
+    'afuera_guapita', 'pedido1', 'pedido2', 'afuera_baby',
+    'primera1', 'primera2', 'primera3', 'primera4',
+    'guapita', 'tercera',
+    'segunda1', 'segunda2', 'segunda3', 'segunda4',
+    'pileta',
+    ...(asignarApoyoPrimera ? ['apoyo_exito'] : []),
+    ...(asignarApoyoSegunda ? ['apoyo_ara'] : []),
+  ];
+
+  // Los nuevos van primero en el pool para gastarse en puestos sin restricción,
+  // dejando veteranos para los puestos vetados a nuevos.
+  const libresPool = disponibles.filter(p => !usados.has(p));
+  const nuevosLibres = mezclar(libresPool.filter(p => esPersonaNueva(p)));
+  const veteranosLibres = mezclar(libresPool.filter(p => !esPersonaNueva(p)));
+  const vetH = veteranosLibres.filter(p => hVigentes.includes(p));
+  const vetM = veteranosLibres.filter(p => !hVigentes.includes(p));
+  const nuH = nuevosLibres.filter(p => hVigentes.includes(p));
+  const nuM = nuevosLibres.filter(p => !hVigentes.includes(p));
+
+  const soloHAntPileta = SECUENCIA_LINEA
+    .filter(pid => pid !== 'pileta')
+    .filter(pid => { const d = PUESTOS_EMPAQUE.find(p => p.id === pid); return d && d.soloHombres; }).length;
+  let reservadoPileta = null;
+  if (vetH.length > soloHAntPileta) reservadoPileta = vetH[vetH.length - 1];
+
+  let poolLinea = [...nuH, ...nuM, ...vetH.filter(p => p !== reservadoPileta), ...vetM];
+
+  for (const puestoId of SECUENCIA_LINEA) {
+    if (asignaciones[puestoId]) continue;
+    const defPuesto = PUESTOS_EMPAQUE.find(p => p.id === puestoId);
+    if (!defPuesto) continue;
+
+    if (puestoId === 'pileta') {
+      const candidato = reservadoPileta && !usados.has(reservadoPileta)
+        ? reservadoPileta
+        : poolLinea.find(p => hVigentes.includes(p) && !usados.has(p));
+      if (candidato) {
+        asignaciones[puestoId] = candidato;
+        usados.add(candidato);
+        poolLinea = poolLinea.filter(p => p !== candidato);
+        if (candidato === reservadoPileta) reservadoPileta = null;
+      }
+      continue;
+    }
+
+    const candidatos = poolLinea.filter(p => {
+      if (usados.has(p)) return false;
+      if (defPuesto.soloHombres && !hVigentes.includes(p)) return false;
+      if (!puedeIrAPuesto(p, puestoId)) return false;
+      return true;
+    });
+    if (candidatos.length === 0) continue;
+    const asignado = candidatos[0];
+    asignaciones[puestoId] = asignado;
+    usados.add(asignado);
+    poolLinea = poolLinea.filter(p => p !== asignado);
+  }
+
+  // ── 5. REGLAS INFORMATIVAS ──
+  const nuevosHoy = disponibles.filter(p => esPersonaNueva(p));
+  if (nuevosHoy.length > 0) {
+    const listaStr = nuevosHoy.map(p => `${p} (${diasRestriccionRestantes(p)} días restantes)`).join(', ');
+    reglas.push({ texto: `Personal nuevo en período de restricción — bloqueados de Guapita, Tercera, Pedido Éxito y Pedido Ara: ${listaStr}.`, tipo: 'ok' });
+  }
+  reglas.push({ texto: 'Secuencia de línea: Afuera Guapita → Pedido Éxito → Primera 1-4 → Apoyo en Primera → Guapita → Tercera → Segunda 1-4 → Apoyo en Segunda → Pedido Ara → Afuera Baby → Pileta.', tipo: 'ok' });
+  reglas.push({ texto: 'Personas en vacaciones excluidas; conservan posición en colas de turno.', tipo: 'ok' });
+  reglas.push({ texto: 'Mujeres no asignadas a puestos de peso ni físicamente pesados.', tipo: 'ok' });
+
+  // ── 6. GUARDAR ──
+  const nuevoDia = estado.dia + 1;
+  const entrada = {
+    dia: nuevoDia,
+    fecha: new Date().toLocaleDateString('es-CO'),
+    hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
+    asignaciones: { ...asignaciones },
+    reglas: reglas,
+    vacaciones: [...vacHoy],
+  };
+  // Aplicar en pantalla de inmediato; Firebase confirma enseguida con los listeners
+  estado.dia = nuevoDia;
+  estado.colasTurno = _colas;
+  estado.historial = [...estado.historial, entrada];
+  fb('guardarReparto', entrada, _colas, nuevoDia);
+  renderTodo();
+  mostrarNotif(`✅ Reparto Día ${nuevoDia} generado exitosamente`);
+}
+
+function resetHistorial() {
+  if (!confirm('¿Reiniciar el historial y las colas de turno?\n\nEl personal, las fechas y las vacaciones NO se borran.\nTe recomiendo descargar un respaldo antes.')) return;
+  estado.historial = []; estado.dia = 0; estado.colasTurno = {};
+  fb('reiniciarHistorial');
+  renderTodo();
+  mostrarNotif('🔄 Historial reiniciado');
+}
+
+// ===================== RENDER HISTORIAL =====================
+let _diasSeleccionados = new Set(); // días seleccionados por número
+
+function renderHistorial() {
+  const cont = document.getElementById('historial-contenido');
+  if (estado.historial.length === 0) {
+    cont.innerHTML = '<p style="color:#999;font-size:0.87rem;">Aún no se han generado repartos.</p>';
+    return;
+  }
+
+  // Construir lista de días disponibles para el selector (más reciente primero)
+  const diasDisponibles = [...estado.historial].reverse();
+
+  // Opciones del selector multi-día
+  const opcionesDias = diasDisponibles.map(e => {
+    const sel = _diasSeleccionados.has(e.dia);
+    const vacIco = (e.vacaciones||[]).length > 0 ? ' 🏖️' : '';
+    return `<option value="${e.dia}" ${sel ? 'selected' : ''}>Día ${e.dia} — ${e.fecha}${vacIco}</option>`;
+  }).join('');
+
+  const haySeleccion = _diasSeleccionados.size > 0;
+  const entradasMostrar = diasDisponibles.filter(e => _diasSeleccionados.has(e.dia));
+
+  const controles = `
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;margin-bottom:18px;">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:260px;">
+        <label style="font-size:0.75rem;font-weight:700;color:#546e7a;text-transform:uppercase;letter-spacing:.4px;">📅 Seleccionar día(s) a consultar</label>
+        <select multiple id="selector-dias" onchange="seleccionarDias()"
+          style="padding:6px 10px;border:1.5px solid #c8e6c9;border-radius:8px;font-size:0.9rem;font-family:inherit;background:#f5f9f5;height:130px;cursor:pointer;">
+          ${opcionesDias}
+        </select>
+        <span style="font-size:0.75rem;color:#999;">Mantén Ctrl (o Cmd en Mac) para seleccionar varios días a la vez.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding-top:24px;">
+        ${haySeleccion ? `<button onclick="limpiarSeleccionDias()" style="padding:8px 16px;border:1.5px solid #ef9a9a;border-radius:8px;background:#fff5f5;color:#c62828;font-size:0.85rem;font-weight:600;cursor:pointer;">✕ Limpiar selección</button>` : ''}
+        <span style="font-size:0.8rem;color:#999;">${haySeleccion ? entradasMostrar.length + ' día(s) seleccionado(s)' : 'Ningún día seleccionado'}</span>
+      </div>
+    </div>`;
+
+  // Sin selección: mostrar solo el selector, sin listas abajo
+  if (!haySeleccion) {
+    cont.innerHTML = controles + `
+      <div style="padding:20px;text-align:center;color:#aaa;font-size:0.9rem;border:1.5px dashed #c8e6c9;border-radius:10px;">
+        📋 Selecciona un día en la lista para ver su reparto
+      </div>`;
+    return;
+  }
+
+  // Con selección: mostrar tarjetas de cada día seleccionado
+  const tarjetas = entradasMostrar.map(entrada => {
+    const todosLosPuestos = [...PUESTOS_EXTERNOS, ...PUESTOS_EMPAQUE];
+
+    const seccionesHTML = [
+      { titulo: '⚖️ Externos',          puestos: PUESTOS_EXTERNOS.map(p => p.id) },
+      { titulo: '🏭 Línea de empaque',  puestos: PUESTOS_EMPAQUE.map(p => p.id)  }
+    ].map(seccion => {
+      const items = seccion.puestos.map(pid => {
+        const def = todosLosPuestos.find(p => p.id === pid);
+        const persona = entrada.asignaciones[pid] || (pid === 'clas1' ? 'Plutarco Sandoval' : pid === 'clas2' ? 'Jose Monzon' : null);
+        if (!def) return '';
+        const esHombre = persona && hombresVigentes().includes(persona);
+        const colorPersona = !persona ? '#bbb' : esHombre ? '#1565c0' : '#ad1457';
+        return `<div style="display:flex;flex-direction:column;padding:7px 11px;border-radius:8px;border:1px solid #e0e0e0;background:#fafafa;min-width:150px;flex:1;">
+          <span style="font-size:0.68rem;font-weight:700;color:#78909c;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;">${def.nombre}</span>
+          <span style="font-size:0.95rem;font-weight:700;color:${colorPersona};">${persona || '— sin asignar —'}</span>
+        </div>`;
+      }).join('');
+      return `<div style="margin-bottom:14px;">
+        <p style="font-size:0.75rem;font-weight:700;color:#546e7a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;">${seccion.titulo}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${items}</div>
+      </div>`;
+    }).join('');
+
+    const vacStr = (entrada.vacaciones||[]).length > 0
+      ? `<div style="margin-top:6px;padding:7px 12px;background:#fff8e1;border-radius:8px;border:1px solid #ffe082;font-size:0.83rem;color:#f57c00;font-weight:600;">🏖️ Vacaciones: ${entrada.vacaciones.join(', ')}</div>`
+      : '';
+
+    return `<div style="border:2px solid #c8e6c9;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div style="padding:12px 18px;background:linear-gradient(90deg,#e8f5e9,white);display:flex;align-items:center;gap:14px;border-bottom:1.5px solid #c8e6c9;">
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;color:#2d7a3a;">Día ${entrada.dia}</span>
+        <span style="font-size:0.8rem;color:#888;">${entrada.fecha} · ${entrada.hora}</span>
+        ${(entrada.vacaciones||[]).length > 0 ? `<span style="font-size:0.75rem;background:#fff8e1;color:#f57c00;border:1px solid #ffe082;border-radius:20px;padding:2px 9px;font-weight:600;">🏖️ ${entrada.vacaciones.length} vacacion${entrada.vacaciones.length>1?'es':''}</span>` : ''}
+      </div>
+      <div style="padding:16px 18px;background:white;">
+        ${seccionesHTML}
+        ${vacStr}
+      </div>
+    </div>`;
+  }).join('');
+
+  cont.innerHTML = controles + tarjetas;
+}
+
+function seleccionarDias() {
+  const sel = document.getElementById('selector-dias');
+  _diasSeleccionados = new Set([...sel.selectedOptions].map(o => Number(o.value)));
+  renderHistorial();
+}
+
+function limpiarSeleccionDias() {
+  _diasSeleccionados = new Set();
+  renderHistorial();
+}
+
+
+
+// ===================== GESTIÓN DE PERSONAL =====================
+function agregarPersonal() {
+  const nombre = limpiarNombre(document.getElementById('nuevo-nombre').value);
+  const genero = document.getElementById('nuevo-genero').value;
+  const fecha = document.getElementById('nuevo-fecha').value || hoyISO();
+  const dias = parseInt(document.getElementById('nuevo-restriccion').value || '0', 10);
+  if (!nombre) { mostrarNotifError('⚠️ Escribe el nombre de la persona.'); return; }
+  if (/['"`<>\\]/.test(nombre)) { mostrarNotifError('⚠️ El nombre no puede llevar comillas ni símbolos especiales.'); return; }
+  if (todasVigentes().some(p => p.toLowerCase() === nombre.toLowerCase())) {
+    mostrarNotifError('⚠️ Esa persona ya está en el equipo.'); return;
+  }
+  const orden = Math.max(-1, ...estado.personas.map(p => p.orden ?? 0)) + 1;
+  fb('guardarPersona', {
+    nombre, genero, fijo: false, fechaIngreso: fecha, vencidas: false,
+    restriccionDias: dias > 0 ? dias : 0, restriccionDesde: dias > 0 ? fecha : '', orden
+  });
+  document.getElementById('nuevo-nombre').value = '';
+  mostrarNotif(`✅ ${nombre} agregado al equipo.`);
+}
+
+function retirarPersonal() {
+  const nombre = document.getElementById('select-retirar').value;
+  if (!nombre) { mostrarNotifError('⚠️ Selecciona una persona para retirar.'); return; }
+  if (FIJOS_CLASIFICACION.includes(nombre)) { mostrarNotifError('⚠️ Esta persona es fija en Clasificación y no puede retirarse desde aquí.'); return; }
+  if (!confirm(`¿Retirar a ${nombre} del equipo?\nSe elimina definitivamente de la lista y de las vacaciones.`)) return;
+  fb('eliminarPersona', nombre);
+  document.getElementById('select-retirar').value = '';
+  mostrarNotif(`🚪 ${nombre} retirado del equipo.`);
+}
+
+function renderEquipoActual() {
+  const cont = document.getElementById('equipo-actual');
+  if (!cont) return;
+  if (estado.personas.length === 0) { cont.innerHTML = '<span style="color:#999;font-size:0.82rem;">Cargando personal…</span>'; return; }
+  cont.innerHTML = estado.personas.map(p =>
+    `<div class="persona-chip ${p.genero === 'hombre' ? 'hombre' : 'mujer'}">${FIJOS_CLASIFICACION.includes(p.nombre) ? '📌' : (p.genero === 'hombre' ? '👨' : '👩')} ${p.nombre}</div>`
+  ).join('');
+}
+function poblarSelectRetirar() {
+  llenarSelect('select-retirar',
+    estado.personas.filter(p => !FIJOS_CLASIFICACION.includes(p.nombre)).map(p => ({
+      value: p.nombre, label: `${p.nombre} (${p.genero === 'hombre' ? 'H' : 'M'})`
+    })), '— Seleccionar persona —');
+}
+
+// ===================== RESPALDO =====================
+async function descargarRespaldo() {
+  if (!window.FB) { mostrarNotifError('⏳ Conectando con la base de datos…'); return; }
+  try {
+    const data = await window.FB.exportar();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'respaldo-empaque-' + hoyISO() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    mostrarNotif('💾 Respaldo descargado.');
+  } catch (e) { console.error(e); mostrarNotifError('⚠️ No se pudo crear el respaldo: ' + (e.code || e.message)); }
+}
+function restaurarRespaldo(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data || !Array.isArray(data.personas)) throw new Error('El archivo no parece un respaldo del tablero.');
+      if (!confirm(`Vas a RESTAURAR el respaldo del ${data.fecha ? data.fecha.slice(0, 10) : '(sin fecha)'}.\n\nEsto REEMPLAZA todos los datos actuales (personal, historial y vacaciones).\n¿Continuar?`)) return;
+      await window.FB.importar(data);
+      mostrarNotif('✅ Respaldo restaurado.');
+    } catch (e) { console.error(e); mostrarNotifError('⚠️ No se pudo restaurar: ' + (e.message || e)); }
+  };
+  reader.readAsText(file);
+}
+
+// Calcular días hábiles (L-S) entre dos fechas
+function diasHabilesEntre(desde, hasta) {
+  let count = 0;
+  const cur = new Date(desde);
+  cur.setHours(0,0,0,0);
+  const fin = new Date(hasta);
+  fin.setHours(0,0,0,0);
+  while (cur <= fin) {
+    const d = cur.getDay(); // 0=Dom, 6=Sab
+    if (d !== 0) count++; // Lunes-Sábado
+    cur.setDate(cur.getDate() + 1);
+  }
+  return count;
+}
+
+// Calcular fecha en que se cumplen N días hábiles desde una fecha
+function sumarDiasHabiles(desde, n) {
+  const cur = new Date(desde);
+  cur.setHours(0,0,0,0);
+  let count = 0;
+  while (count < n) {
+    cur.setDate(cur.getDate() + 1);
+    if (cur.getDay() !== 0) count++; // Lunes-Sábado
+  }
+  return cur;
+}
+
+
+// ===================== FESTIVOS COLOMBIA (Ley Emiliani) =====================
+// Fijos: 1 ene, 1 may, 20 jul, 7 ago, 8 dic, 25 dic
+// Trasladados al lunes siguiente: 6 ene, 19 mar, 29 jun, 15 ago, 12 oct, 1 nov, 11 nov
+// Según Pascua: Jueves Santo, Viernes Santo (fijos) y Ascensión, Corpus Christi, Sagrado Corazón (lunes)
+function pascua(anio) {
+  const a = anio % 19, b = Math.floor(anio / 100), c = anio % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(anio, mes - 1, dia, 12, 0, 0);
+}
+const _cacheFestivos = {};
+function getFestivosAno(anio) {
+  if (_cacheFestivos[anio]) return _cacheFestivos[anio];
+  const set = new Set();
+  const add = (d) => set.add(aISO(d));
+  // fijos
+  [[0, 1], [4, 1], [6, 20], [7, 7], [11, 8], [11, 25]].forEach(([m, d]) => add(new Date(anio, m, d, 12)));
+  // trasladados al lunes (si ya cae lunes, se queda)
+  [[0, 6], [2, 19], [5, 29], [7, 15], [9, 12], [10, 1], [10, 11]].forEach(([m, d]) => {
+    const f = new Date(anio, m, d, 12);
+    f.setDate(f.getDate() + ((8 - f.getDay()) % 7));
+    add(f);
+  });
+  // según Pascua
+  const p = pascua(anio);
+  const mas = (n) => { const x = new Date(p); x.setDate(x.getDate() + n); return x; };
+  add(mas(-3)); add(mas(-2));            // Jueves y Viernes Santo
+  add(mas(43)); add(mas(64)); add(mas(71)); // Ascensión, Corpus Christi, Sagrado Corazón (lunes)
+  _cacheFestivos[anio] = set;
+  return set;
+}
+function esFestivo(fecha) { return getFestivosAno(fecha.getFullYear()).has(aISO(fecha)); }
+// Día hábil = lunes a sábado que no sea festivo
+function esDiaHabil(fecha) { return fecha.getDay() !== 0 && !esFestivo(fecha); }
+
+// La salida cuenta como primer día de vacaciones: el regreso es el día hábil número N después de la salida.
+function calcularFechaRegreso(fechaSalida, diasHabiles) {
+  const cur = new Date(fechaSalida);
+  cur.setHours(12, 0, 0, 0);
+  let count = 0;
+  while (count < diasHabiles) {
+    cur.setDate(cur.getDate() + 1);
+    if (esDiaHabil(cur)) count++;
+  }
+  return new Date(cur);
+}
+
+// ===================== PANEL PERSONAL & VACACIONES =====================
+let _filtroPersonal = 'todos';
+let _busquedaPersonal = '';
+
+function infoVacaciones(nombre) {
+  const p = personaPor(nombre);
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+
+  let ingreso = null, aniversario = null, diasHastaAniv = null, diasHabilesAcum = 0, porcentaje = 0;
+  if (p && p.fechaIngreso) {
+    ingreso = fechaDe(p.fechaIngreso);
+    aniversario = new Date(ingreso); aniversario.setHours(0, 0, 0, 0);
+    aniversario.setFullYear(hoy.getFullYear());
+    if (aniversario < hoy) aniversario.setFullYear(hoy.getFullYear() + 1);
+    diasHastaAniv = Math.round((aniversario - hoy) / 86400000);
+    const ultimoAniv = new Date(ingreso); ultimoAniv.setHours(0, 0, 0, 0);
+    ultimoAniv.setFullYear(hoy.getFullYear());
+    if (ultimoAniv > hoy) ultimoAniv.setFullYear(hoy.getFullYear() - 1);
+    diasHabilesAcum = diasHabilesEntre(ultimoAniv, hoy);
+    porcentaje = Math.min(100, Math.round((diasHabilesAcum / 310) * 100));
+  }
+
+  // De vacaciones ahora mismo
+  if (enVacacionesHoy(nombre)) {
+    return { sinFecha: !ingreso, ingreso, aniversario, diasHastaAniv, porcentaje, diasHabilesAcum,
+      estadoVac: 'de-vacaciones', badge: '🏖️ De vacaciones', badgeClass: 'azul' };
+  }
+  // Marcado manualmente como vencido
+  if (p && p.vencidas) {
+    return { sinFecha: false, ingreso, aniversario, diasHastaAniv: diasHastaAniv ?? 0, porcentaje: 100, diasHabilesAcum: ingreso ? diasHabilesAcum : 310,
+      estadoVac: 'vencido', badge: '⚠️ Vacaciones vencidas', badgeClass: 'rojo', esManual: true };
+  }
+  if (!ingreso) return { sinFecha: true };
+
+  let estadoVac = 'activo', badge, badgeClass;
+  if (diasHastaAniv <= 15) {
+    estadoVac = 'pronto'; badge = `🔔 Vacaciones en ${diasHastaAniv} día(s)`; badgeClass = 'naranja';
+  } else {
+    badge = `📅 En ${diasHastaAniv} días`; badgeClass = 'verde';
+  }
+  return { sinFecha: false, ingreso, aniversario, diasHastaAniv, porcentaje, diasHabilesAcum, estadoVac, badge, badgeClass };
+}
+
+function cambiarTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('activa'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activa'));
+  document.getElementById('tab-' + tab).classList.add('activa');
+  btn.classList.add('activa');
+  if (tab === 'personal') renderPanelPersonal();
+  if (tab === 'especial') renderRepartoEspecial();
+}
+function filtrarPersonal(filtro, btn) {
+  _filtroPersonal = filtro;
+  document.querySelectorAll('.filtro-chip').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  renderPanelPersonal();
+}
+function buscarPersonal(val) { _busquedaPersonal = val.toLowerCase(); renderPanelPersonal(); }
+
+function renderPanelPersonal() {
+  const gridEl = document.getElementById('personal-grid');
+  const todas = todasVigentes();
+  const hs = hombresVigentes();
+  const enVac = new Set(vacacionesHoyLista());
+
+  if (todas.length === 0) {
+    gridEl.innerHTML = '<p style="color:#999;font-size:0.87rem;">' + (estado.listo ? 'No hay personal registrado.' : 'Cargando personal…') + '</p>';
+    return;
+  }
+
+  const infos = {};
+  todas.forEach(p => { infos[p] = infoVacaciones(p); });
+
+  let lista = todas.filter(p => {
+    if (_busquedaPersonal && !p.toLowerCase().includes(_busquedaPersonal)) return false;
+    const info = infos[p];
+    switch (_filtroPersonal) {
+      case 'alerta': return !info.sinFecha && (info.estadoVac === 'pronto' || info.estadoVac === 'vencido');
+      case 'vacaciones': return enVac.has(p);
+      case 'nuevos': return esPersonaNueva(p);
+      case 'hombres': return hs.includes(p);
+      case 'mujeres': return !hs.includes(p);
+      default: return true;
+    }
+  });
+
+  const orden = { 'vencido': 0, 'de-vacaciones': 1, 'pronto': 2, 'activo': 3 };
+  lista.sort((a, b) => {
+    const ia = infos[a], ib = infos[b];
+    const oa = orden[ia.estadoVac] ?? 4, ob = orden[ib.estadoVac] ?? 4;
+    if (oa !== ob) return oa - ob;
+    return (ia.diasHastaAniv ?? 999) - (ib.diasHastaAniv ?? 999);
+  });
+
+  // Resumen
+  const conAlerta = todas.filter(p => infos[p].estadoVac === 'pronto' || infos[p].estadoVac === 'vencido');
+  const totalNuevos = todas.filter(p => esPersonaNueva(p)).length;
+  const totalSinFecha = todas.filter(p => infos[p].sinFecha).length;
+  document.getElementById('resumen-personal').innerHTML = [
+    { label: 'Total personal', val: todas.length, color: 'var(--verde)', bg: 'var(--verde-bg)' },
+    { label: 'Con alerta vacaciones', val: conAlerta.length, color: conAlerta.length > 0 ? '#e65100' : 'var(--gris)', bg: conAlerta.length > 0 ? '#fff3e0' : 'var(--gris-bg)' },
+    { label: 'De vacaciones hoy', val: enVac.size, color: '#1565c0', bg: '#e3f2fd' },
+    { label: 'En período restricción', val: totalNuevos, color: '#6a1b9a', bg: '#f3e5f5' },
+    { label: 'Sin fecha de ingreso', val: totalSinFecha, color: totalSinFecha > 0 ? '#c62828' : 'var(--gris)', bg: totalSinFecha > 0 ? '#ffebee' : 'var(--gris-bg)' },
+  ].map(r => `<div style="padding:10px 16px;border-radius:10px;background:${r.bg};border:1.5px solid ${r.color}30;display:flex;flex-direction:column;gap:2px;">
+    <span style="font-size:1.4rem;font-weight:700;color:${r.color};">${r.val}</span>
+    <span style="font-size:0.73rem;color:var(--gris);font-weight:600;">${r.label}</span>
+  </div>`).join('');
+
+  // Banner de alertas
+  document.getElementById('alertas-vacaciones-banner').innerHTML = conAlerta.length > 0
+    ? `<div class="alerta-banner">⚠️ <strong>${conAlerta.length} persona(s) con vacaciones próximas o vencidas:</strong> ${conAlerta.map(p =>
+      `${p} (${infos[p].estadoVac === 'vencido' ? 'VENCIDAS' : 'en ' + infos[p].diasHastaAniv + ' días'})`).join(' · ')}</div>`
+    : '';
+
+  if (lista.length === 0) {
+    gridEl.innerHTML = '<p style="color:#999;font-size:0.87rem;">No hay personas que coincidan con el filtro.</p>';
+  } else {
+    gridEl.innerHTML = lista.map(p => {
+      try {
+        const info = infos[p];
+        const esH = hs.includes(p);
+        const esFijo = FIJOS_CLASIFICACION.includes(p);
+        const esNuevo = esPersonaNueva(p);
+        const iniciales = p.split(' ').slice(0, 2).map(x => x[0]).join('').toUpperCase();
+
+        let cardClass = '';
+        if (info.estadoVac === 'pronto') cardClass = 'alerta-pronto';
+        else if (info.estadoVac === 'vencido') cardClass = 'alerta-hoy';
+        else if (info.estadoVac === 'de-vacaciones') cardClass = 'de-vacaciones';
+        else if (esNuevo) cardClass = 'nuevo-personal';
+
+        const barraClass = info.estadoVac === 'vencido' ? 'llena' : info.estadoVac === 'pronto' ? 'pronto' : (info.porcentaje || 0) > 80 ? 'pronto' : '';
+        const fechaAnivStr = info.aniversario ? fmtFecha(info.aniversario) : '—';
+        const fechaIngStr = info.ingreso ? fmtFecha(info.ingreso) : '—';
+        const esVencidoManual = !!(personaPor(p) && personaPor(p).vencidas);
+
+        return `<div class="personal-card ${cardClass}">
+      <div class="pc-header">
+        <div class="pc-avatar ${esH ? '' : 'mujer'}">${iniciales}</div>
+        <div style="flex:1;">
+          <div class="pc-nombre">${p}</div>
+          <div class="pc-cargo">${esFijo ? '📌 Fijo Clasificación' : esH ? '👨 Operario' : '👩 Operaria'}</div>
+        </div>
+        ${esVencidoManual ? `<button onclick="desmarcarVacacionesVencidas('${p}')" style="padding:3px 8px;border:1px solid #81c784;border-radius:6px;background:#e8f5e9;color:#2d7a3a;font-size:0.72rem;cursor:pointer;">✅ Marcar al día</button>` : ''}
+      </div>
+      ${info.sinFecha
+            ? `<div style="padding:8px;background:#fff8e1;border-radius:7px;font-size:0.8rem;color:#f57c00;font-weight:600;">⚠️ Sin fecha de ingreso registrada</div>`
+            : `<div class="pc-barra-cont"><div class="pc-barra ${barraClass}" style="width:${info.porcentaje}%"></div></div>
+           <div class="pc-info"><span>${info.diasHabilesAcum} días háb. trabajados</span><span>${info.porcentaje}% del año</span></div>`}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;">
+        <span class="pc-badge ${info.badgeClass || 'gris'}">${info.badge || 'Sin fecha'}</span>
+        ${esNuevo ? `<span class="pc-badge morado">🆕 ${diasRestriccionRestantes(p)} día(s) en restricción</span>` : ''}
+      </div>
+      <div class="pc-fechas">
+        <div class="pc-fecha-row"><span class="pc-fecha-label">Ingreso empresa:</span><span class="pc-fecha-val">${fechaIngStr}</span></div>
+        <div class="pc-fecha-row"><span class="pc-fecha-label">Próximas vacaciones:</span><span class="pc-fecha-val">${fechaAnivStr}</span></div>
+      </div>
+    </div>`;
+      } catch (e) {
+        console.warn('tarjeta error', p, e);
+        return `<div class="personal-card"><b>${p}</b><br><small style="color:#999">Error al mostrar</small></div>`;
+      }
+    }).join('');
+  }
+
+  seguro('selectores personal', () => {
+    llenarSelect('sel-vac-persona', todas.map(p => ({ value: p, label: p })), '— Seleccionar persona —');
+    llenarSelect('sel-persona-fecha', todas.map(p => ({ value: p, label: p + (infos[p].sinFecha ? ' ⚠️' : '') })), '— Seleccionar persona —');
+    renderTablaVacaciones();
+  });
+}
+
+function desmarcarVacacionesVencidas(nombre) {
+  fb('actualizarPersona', nombre, { vencidas: false });
+  mostrarNotif(`✅ ${nombre} marcado al día.`);
+}
+
+// ── Editor de datos de una persona ──
+function cargarEditorPersona() {
+  const nombre = document.getElementById('sel-persona-fecha').value;
+  const p = personaPor(nombre);
+  document.getElementById('input-fecha-ingreso').value = p ? (p.fechaIngreso || '') : '';
+  document.getElementById('input-restr-dias').value = p ? (p.restriccionDias || 0) : '';
+  document.getElementById('input-restr-desde').value = p ? (p.restriccionDesde || '') : '';
+  document.getElementById('chk-vencidas').checked = !!(p && p.vencidas);
+}
+function guardarEditorPersona() {
+  const nombre = document.getElementById('sel-persona-fecha').value;
+  if (!nombre) { mostrarNotifError('⚠️ Selecciona una persona.'); return; }
+  const dias = parseInt(document.getElementById('input-restr-dias').value || '0', 10);
+  const desde = document.getElementById('input-restr-desde').value;
+  if (dias > 0 && !desde) { mostrarNotifError('⚠️ Si hay días de restricción, indica desde qué fecha.'); return; }
+  fb('actualizarPersona', nombre, {
+    fechaIngreso: document.getElementById('input-fecha-ingreso').value || '',
+    restriccionDias: dias > 0 ? dias : 0,
+    restriccionDesde: dias > 0 ? desde : '',
+    vencidas: document.getElementById('chk-vencidas').checked
+  });
+  mostrarNotif(`✅ Datos de ${nombre} guardados.`);
+}
+
+// ── Períodos de vacaciones ──
+function calcularRegresoPreview() {
+  const fecha = document.getElementById('input-vac-salida').value;
+  const el = document.getElementById('fecha-regreso-calculada');
+  if (!fecha) { el.textContent = '— Selecciona fecha —'; return; }
+  el.textContent = fmtFecha(calcularFechaRegreso(fechaDe(fecha), 15), true);
+}
+
+function registrarSalidaVacaciones() {
+  const nombre = document.getElementById('sel-vac-persona').value;
+  const salida = document.getElementById('input-vac-salida').value;
+  if (!nombre) { mostrarNotifError('⚠️ Selecciona una persona.'); return; }
+  if (!salida) { mostrarNotifError('⚠️ Selecciona la fecha de salida.'); return; }
+  if (estado.registroVacaciones.some(r => r.nombre === nombre && r.estado === 'activo')) {
+    mostrarNotifError(`⚠️ ${nombre} ya tiene vacaciones activas. Marca primero su regreso.`); return;
+  }
+  const regresoDate = calcularFechaRegreso(fechaDe(salida), 15);
+  fb('guardarVacacion', {
+    id: 'v' + Date.now(), nombre, salida, regreso: aISO(regresoDate), estado: 'activo'
+  });
+  mostrarNotif(`✅ ${nombre} registrado — regresa el ${fmtFecha(regresoDate, true)}`);
+}
+function marcarRegreso(id) {
+  const r = estado.registroVacaciones.find(x => x.id === id);
+  if (!r) return;
+  fb('actualizarVacacion', id, { estado: 'regreso', regresoReal: hoyISO() });
+  fb('vacQuitar', r.nombre);
+  if (personaPor(r.nombre)) fb('actualizarPersona', r.nombre, { vencidas: false });
+  mostrarNotif(`✅ ${r.nombre} regresó. Ya aparece en el reparto.`);
+}
+function eliminarRegistroVac(id) {
+  if (!confirm('¿Eliminar este registro de vacaciones?')) return;
+  fb('eliminarVacacion', id);
+}
+function renderTablaVacaciones() {
+  const cont = document.getElementById('tabla-vacaciones-cont');
+  if (!cont) return;
+  const registros = [...estado.registroVacaciones].reverse();
+  if (registros.length === 0) {
+    cont.innerHTML = '<p style="color:#999;font-size:0.87rem;">No hay registros de vacaciones aún.</p>';
+    return;
+  }
+  const hoy = hoyISO();
+  const filas = registros.map(r => {
+    const yaDebio = r.regreso <= hoy && r.estado === 'activo';
+    const chip = r.estado === 'regreso'
+      ? `<span class="estado-chip estado-regreso">✅ Regresó</span>`
+      : yaDebio
+        ? `<span class="estado-chip" style="background:#fff3e0;color:#e65100;">⏰ Debió regresar</span>`
+        : r.salida > hoy
+          ? `<span class="estado-chip" style="background:#f3e5f5;color:#6a1b9a;">📅 Programadas</span>`
+          : `<span class="estado-chip estado-activo">🏖️ De vacaciones</span>`;
+    const acciones = (r.estado === 'activo'
+      ? `<button onclick="marcarRegreso('${r.id}')" style="padding:5px 12px;border:none;border-radius:7px;background:var(--verde);color:white;font-size:0.8rem;font-weight:700;cursor:pointer;margin-right:5px;">✅ Regresó</button>`
+      : '') +
+      `<button onclick="eliminarRegistroVac('${r.id}')" style="padding:5px 10px;border:1px solid #ef9a9a;border-radius:7px;background:#fff5f5;color:#c62828;font-size:0.8rem;cursor:pointer;">🗑️</button>`;
+    return `<tr>
+      <td style="font-weight:700;color:var(--texto);">${r.nombre}</td>
+      <td>${fmtFecha(fechaDe(r.salida))}</td>
+      <td style="font-weight:700;color:${yaDebio ? '#e65100' : 'var(--verde)'};">${fmtFecha(fechaDe(r.regreso))}</td>
+      <td>${chip}</td>
+      <td>${acciones}</td>
+    </tr>`;
+  }).join('');
+  cont.innerHTML = `<div style="overflow-x:auto;"><table class="vac-tabla">
+    <thead><tr><th>Persona</th><th>Salida</th><th>Regreso calculado</th><th>Estado</th><th>Acción</th></tr></thead>
+    <tbody>${filas}</tbody></table></div>`;
+}
+
+// ===================== REPARTO ESPECIAL =====================
+const GRUPOS_DEFAULT = [
+  { id: 1, emoji: '🌿', nombre: 'Personal para Campo', color: '#e8f5e9', borderColor: '#81c784' },
+  { id: 2, emoji: '🗑️', nombre: 'Personal para Botar Basura', color: '#fff8e1', borderColor: '#ffd54f' },
+  { id: 3, emoji: '🧹', nombre: 'Personal para Aseo', color: '#e3f2fd', borderColor: '#90caf9' },
+  { id: 4, emoji: '📦', nombre: 'Personal para Proceso Empaque', color: '#f3e5f5', borderColor: '#ce93d8' },
+];
+let reGrupos = [];
+let reGrupoActivo = null;
+let reTitulo = '';
+let _reTimer = null;
+let _reDirty = false; // hay cambios locales aún sin guardar
+
+function reDesdeEstado() {
+  if (_reDirty) return; // no pisar lo que el usuario acaba de cambiar
+  const e = estado.especial;
+  if (e && Array.isArray(e.grupos)) {
+    reGrupos = e.grupos.map(g => ({ ...g, personas: g.personas || [] }));
+    reTitulo = e.titulo || '';
+  } else if (reGrupos.length === 0) {
+    reGrupos = GRUPOS_DEFAULT.map(g => ({ ...g, personas: [] }));
+  }
+  if (!reGrupos.find(g => g.id === reGrupoActivo)) reGrupoActivo = reGrupos[0] ? reGrupos[0].id : null;
+}
+function reGuardar() {
+  _reDirty = true;
+  clearTimeout(_reTimer);
+  _reTimer = setTimeout(() => {
+    const t = document.getElementById('re-titulo');
+    fb('guardarEspecial', { titulo: t ? t.value : reTitulo, grupos: reGrupos });
+    _reDirty = false;
+  }, 500);
+}
+function reTituloCambio(v) { reTitulo = v; reGuardar(); }
+
+function agregarGrupoEspecial() {
+  const emojis = ['🏭', '🚛', '🌱', '⚙️', '🔧', '📋', '🚿', '🌾'];
+  const colors = [
+    { color: '#e8f5e9', border: '#81c784' }, { color: '#fff8e1', border: '#ffd54f' },
+    { color: '#e3f2fd', border: '#90caf9' }, { color: '#f3e5f5', border: '#ce93d8' },
+    { color: '#fce4ec', border: '#f48fb1' }, { color: '#e0f2f1', border: '#80cbc4' },
+  ];
+  const idx = reGrupos.length % colors.length;
+  const nuevo = {
+    id: Date.now(), emoji: emojis[reGrupos.length % emojis.length], nombre: 'Nuevo grupo',
+    color: colors[idx].color, borderColor: colors[idx].border, personas: []
+  };
+  reGrupos.push(nuevo);
+  reGrupoActivo = nuevo.id;
+  renderRepartoEspecial(); reGuardar();
+}
+function eliminarGrupoEspecial(id) {
+  if (!confirm('¿Eliminar este grupo?')) return;
+  reGrupos = reGrupos.filter(g => g.id !== id);
+  if (reGrupoActivo === id) reGrupoActivo = reGrupos.length > 0 ? reGrupos[0].id : null;
+  renderRepartoEspecial(); reGuardar();
+}
+function setGrupoActivo(id) { reGrupoActivo = id; renderRepartoEspecial(); }
+function quitarPersonaDeGrupo(grupoId, persona) {
+  const g = reGrupos.find(g => g.id === grupoId);
+  if (g) g.personas = g.personas.filter(p => p !== persona);
+  renderRepartoEspecial(); reGuardar();
+}
+function asignarPersonaAGrupo(persona) {
+  if (!reGrupoActivo) { mostrarNotifError('⚠️ Selecciona un grupo primero.'); return; }
+  reGrupos.forEach(g => { g.personas = g.personas.filter(p => p !== persona); });
+  const g = reGrupos.find(g => g.id === reGrupoActivo);
+  if (g && !g.personas.includes(persona)) g.personas.push(persona);
+  renderRepartoEspecial(); reGuardar();
+}
+function renombrarGrupo(id, val) {
+  const g = reGrupos.find(g => g.id === id);
+  if (g) g.nombre = val;
+  reGuardar();
+}
+function limpiarRepartoEspecial() {
+  if (!confirm('¿Limpiar todas las asignaciones del reparto especial?')) return;
+  reGrupos.forEach(g => g.personas = []);
+  reTitulo = '';
+  const t = document.getElementById('re-titulo'); if (t) t.value = '';
+  renderRepartoEspecial(); reGuardar();
+}
+
+function renderRepartoEspecial() {
+  const cont = document.getElementById('re-grupos-cont');
+  if (!cont) return;
+  if (reGrupos.length === 0) reDesdeEstado();
+  const act = document.activeElement;
+  if (act && act.classList && act.classList.contains('re-grupo-nombre')) return; // no interrumpir mientras escribe
+  const tit = document.getElementById('re-titulo');
+  if (tit && document.activeElement !== tit) tit.value = reTitulo;
+
+  const todas = todasVigentes();
+  const existen = new Set(todas);
+  const hs = hombresVigentes();
+  const asignadas = new Set(reGrupos.flatMap(g => g.personas.filter(p => existen.has(p))));
+
+  cont.innerHTML = reGrupos.map(g => {
+    const esActivo = g.id === reGrupoActivo;
+    const personas = g.personas.filter(p => existen.has(p));
+    const chips = personas.map(p => {
+      const esH = hs.includes(p);
+      return `<span class="re-persona-chip ${esH ? 'hombre' : 'mujer'}">
+        ${esH ? '👨' : '👩'} ${p}
+        <button class="re-quitar" onclick="quitarPersonaDeGrupo(${g.id},'${p}')">✕</button>
+      </span>`;
+    }).join('');
+    return `<div class="re-grupo" style="border-color:${esActivo ? 'var(--verde)' : g.borderColor};${esActivo ? 'box-shadow:0 0 0 3px rgba(45,122,58,0.15);' : ''}">
+      <div class="re-grupo-header" style="background:linear-gradient(90deg,${g.color},white);">
+        <span style="font-size:1.3rem;">${g.emoji}</span>
+        <input class="re-grupo-nombre" value="${escAttr(g.nombre)}" oninput="renombrarGrupo(${g.id},this.value)">
+        <span style="font-size:0.8rem;font-weight:700;color:var(--gris);">${personas.length} persona(s)</span>
+        ${esActivo ? '<span style="background:var(--verde);color:white;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:700;">ACTIVO</span>' : ''}
+        <button onclick="setGrupoActivo(${g.id})" style="padding:4px 10px;border:1.5px solid var(--verde);border-radius:7px;background:${esActivo ? 'var(--verde)' : 'white'};color:${esActivo ? 'white' : 'var(--verde)'};font-size:0.78rem;font-weight:700;cursor:pointer;">
+          ${esActivo ? '✓ Seleccionado' : 'Seleccionar'}
+        </button>
+        <button onclick="eliminarGrupoEspecial(${g.id})" style="padding:4px 8px;border:1px solid #ef9a9a;border-radius:7px;background:#fff5f5;color:#c62828;font-size:0.78rem;cursor:pointer;">🗑️</button>
+      </div>
+      <div class="re-personas-grid">
+        ${chips || '<span style="color:#bbb;font-size:0.82rem;font-style:italic;">Sin personal asignado — selecciona este grupo y toca personas abajo</span>'}
+      </div>
+    </div>`;
+  }).join('');
+
+  const dispCont = document.getElementById('re-disponibles');
+  if (dispCont) {
+    dispCont.innerHTML = todas.map(p => {
+      const esH = hs.includes(p);
+      const yaAsignado = asignadas.has(p);
+      return '<button class="' + (yaAsignado ? 're-disp-chip asignado' : 're-disp-chip') + '" data-nombre="' + escAttr(p) + '" ' +
+        (yaAsignado ? '' : 'onclick="asignarPersonaAGrupo(this.dataset.nombre)"') +
+        ' title="' + (yaAsignado ? 'Ya asignado a un grupo' : 'Clic para asignar al grupo activo') + '">' +
+        (esH ? '👨' : '👩') + ' ' + p + (yaAsignado ? ' ✓' : '') + '</button>';
+    }).join('');
+  }
+  const c2 = document.getElementById('re-contador-disp');
+  if (c2) c2.textContent = `— ${todas.length - asignadas.size} de ${todas.length} sin asignar`;
+}
+
+function imprimirRepartoEspecial() {
+  const titulo = document.getElementById('re-titulo').value || 'Reparto Especial';
+  const fecha = new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const retirados = retiradosVigentes();
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${titulo}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; color: #1a2b1a; max-width: 800px; margin: 0 auto; }
+    h1 { color: #2d7a3a; font-size: 1.4rem; margin-bottom: 4px; }
+    .fecha { color: #777; font-size: 0.88rem; margin-bottom: 24px; }
+    .grupo { margin-bottom: 20px; border-radius: 10px; overflow: hidden; border: 2px solid #c8e6c9; }
+    .grupo-header { padding: 10px 16px; background: #e8f5e9; display: flex; align-items: center; gap: 10px; }
+    .grupo-nombre { font-size: 1.05rem; font-weight: 700; color: #2d7a3a; }
+    .grupo-count { font-size: 0.8rem; color: #555; }
+    .personas { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px; background: white; }
+    .persona { padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 600; border: 1.5px solid #c8e6c9; background: #f5f9f5; }
+    .vacio { color: #bbb; font-style: italic; font-size: 0.85rem; }
+    .pie { margin-top: 30px; font-size: 0.75rem; color: #999; border-top: 1px solid #eee; padding-top: 10px; }
+    @media print { body { padding: 15px; } }
+  </style></head><body>
+  <h1>🍍 ${titulo}</h1>
+  <div class="fecha">📅 ${fecha} — Agrícola Guapa</div>`;
+
+  reGrupos.forEach(g => {
+    html += `<div class="grupo">
+      <div class="grupo-header">
+        <span>${g.emoji}</span>
+        <span class="grupo-nombre">${g.nombre}</span>
+        <span class="grupo-count">${g.personas.length} persona(s)</span>
+      </div>
+      <div class="personas">
+        ${g.personas.length > 0
+          ? g.personas.map(p => `<span class="persona">${p}</span>`).join('')
+          : '<span class="vacio">Sin personal asignado</span>'}
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="pie">Generado por Tablero Empaque Piña PRO — Agrícola Guapa</div>
+  </body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.print();
+}
+
+
+
+// ===================== RENDER GENERAL =====================
+function renderTodo() {
+  seguro('fecha', actualizarFecha);
+  seguro('vacaciones', renderVacaciones);
+  seguro('selVacaciones', poblarSelectVacaciones);
+  seguro('selRetirar', poblarSelectRetirar);
+  seguro('equipo', renderEquipoActual);
+  seguro('disponibles', renderPersonasDisponibles);
+  seguro('reparto', () => {
+    const ult = estado.historial[estado.historial.length - 1];
+    if (ult) { renderAsignaciones(ult.asignaciones || {}); renderReglas(ult.reglas || []); }
+    else { renderPuestosVacios(); renderReglas([]); }
+  });
+  seguro('historial', renderHistorial);
+  const activa = document.querySelector('.tab-content.activa');
+  if (activa && activa.id === 'tab-personal') seguro('panelPersonal', renderPanelPersonal);
+  if (activa && activa.id === 'tab-especial') seguro('especial', renderRepartoEspecial);
+}
+
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot,
+  query, orderBy, limit, writeBatch, arrayUnion, arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDXWAFAGn78pC9s04G3dC6PeWv4WYbWN4w",
+  authDomain: "empaque-pina.firebaseapp.com",
+  projectId: "empaque-pina",
+  storageBucket: "empaque-pina.firebasestorage.app",
+  messagingSenderId: "220499297155",
+  appId: "1:220499297155:web:4f5e101acec5908860ecb6"
+};
+
+const app = initializeApp(firebaseConfig);
+let db;
+try {
+  // Caché local: el tablero abre y funciona aunque la señal en la planta sea mala
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+} catch (e) {
+  db = getFirestore(app);
+}
+
+const slug = (n) => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const idDia = (dia) => String(dia).padStart(5, '0');
+
+async function borrarEnLotes(refs) {
+  for (let i = 0; i < refs.length; i += 400) {
+    const b = writeBatch(db);
+    refs.slice(i, i + 400).forEach(r => b.delete(r));
+    await b.commit();
+  }
+}
+async function escribirEnLotes(items) { // items: [{ref, data}]
+  for (let i = 0; i < items.length; i += 400) {
+    const b = writeBatch(db);
+    items.slice(i, i + 400).forEach(it => b.set(it.ref, it.data));
+    await b.commit();
+  }
+}
+
+const FB = {
+  // Arranca los listeners en tiempo real. La primera vez siembra el personal inicial.
+  async iniciar(cb, seed) {
+    try {
+      const metaRef = doc(db, 'config', 'meta');
+      const metaSnap = await getDoc(metaRef);
+      if (!metaSnap.exists()) {
+        const items = seed.map((p, i) => ({ ref: doc(db, 'personas', slug(p.nombre)), data: { ...p, orden: i } }));
+        await escribirEnLotes(items);
+        await setDoc(doc(db, 'config', 'estado'), { dia: 0, vacManual: [], colasTurno: {} });
+        await setDoc(metaRef, { seeded: true, creado: Date.now() });
+      }
+    } catch (e) {
+      console.warn('No se pudo verificar/sembrar datos iniciales:', e);
+      if (cb.error) cb.error(e);
+    }
+
+    const err = (e) => { if (cb.error) cb.error(e); };
+    onSnapshot(collection(db, 'personas'),
+      s => cb.personas(s.docs.map(d => ({ id: d.id, ...d.data() })), s.metadata), err);
+    onSnapshot(doc(db, 'config', 'estado'),
+      s => cb.estado(s.exists() ? s.data() : {}), err);
+    onSnapshot(query(collection(db, 'historial'), orderBy('dia', 'desc'), limit(120)),
+      s => cb.historial(s.docs.map(d => d.data()).reverse()), err);
+    onSnapshot(collection(db, 'vacaciones'),
+      s => cb.vacaciones(s.docs.map(d => ({ id: d.id, ...d.data() }))), err);
+    onSnapshot(doc(db, 'config', 'especial'),
+      s => cb.especial(s.exists() ? s.data() : null), err);
+  },
+
+  // ---- Personal ----
+  guardarPersona(p) { return setDoc(doc(db, 'personas', slug(p.nombre)), p); },
+  actualizarPersona(nombre, campos) { return updateDoc(doc(db, 'personas', slug(nombre)), campos); },
+  eliminarPersona(nombre) {
+    const b = writeBatch(db);
+    b.delete(doc(db, 'personas', slug(nombre)));
+    b.set(doc(db, 'config', 'estado'), { vacManual: arrayRemove(nombre) }, { merge: true });
+    return b.commit();
+  },
+
+  // ---- Vacaciones del día (lista manual) ----
+  vacAgregar(nombre) { return setDoc(doc(db, 'config', 'estado'), { vacManual: arrayUnion(nombre) }, { merge: true }); },
+  vacQuitar(nombre) { return setDoc(doc(db, 'config', 'estado'), { vacManual: arrayRemove(nombre) }, { merge: true }); },
+
+  // ---- Reparto ----
+  guardarReparto(entrada, colas, dia) {
+    const b = writeBatch(db);
+    b.set(doc(db, 'historial', idDia(entrada.dia)), entrada);
+    b.set(doc(db, 'config', 'estado'), { dia, colasTurno: colas }, { merge: true });
+    return b.commit();
+  },
+  async reiniciarHistorial() {
+    const snap = await getDocs(collection(db, 'historial'));
+    await borrarEnLotes(snap.docs.map(d => d.ref));
+    try { await updateDoc(doc(db, 'config', 'estado'), { dia: 0, colasTurno: {} }); }
+    catch (e) { await setDoc(doc(db, 'config', 'estado'), { dia: 0, colasTurno: {} }, { merge: true }); }
+  },
+
+  // ---- Períodos de vacaciones ----
+  guardarVacacion(reg) { return setDoc(doc(db, 'vacaciones', reg.id), reg); },
+  actualizarVacacion(id, campos) { return updateDoc(doc(db, 'vacaciones', id), campos); },
+  eliminarVacacion(id) { return deleteDoc(doc(db, 'vacaciones', id)); },
+
+  // ---- Reparto especial ----
+  guardarEspecial(obj) { return setDoc(doc(db, 'config', 'especial'), obj); },
+
+  // ---- Respaldo ----
+  async exportar() {
+    const leer = async (col) => (await getDocs(collection(db, col))).docs.map(d => ({ id: d.id, ...d.data() }));
+    const est = await getDoc(doc(db, 'config', 'estado'));
+    const esp = await getDoc(doc(db, 'config', 'especial'));
+    return {
+      version: 1,
+      fecha: new Date().toISOString(),
+      personas: await leer('personas'),
+      historial: await leer('historial'),
+      vacaciones: await leer('vacaciones'),
+      estado: est.exists() ? est.data() : {},
+      especial: esp.exists() ? esp.data() : null
+    };
+  },
+  async importar(data) {
+    for (const col of ['personas', 'historial', 'vacaciones']) {
+      const snap = await getDocs(collection(db, col));
+      await borrarEnLotes(snap.docs.map(d => d.ref));
+    }
+    const items = [];
+    (data.personas || []).forEach(({ id, ...p }) => items.push({ ref: doc(db, 'personas', id || slug(p.nombre)), data: p }));
+    (data.historial || []).forEach(({ id, ...h }) => items.push({ ref: doc(db, 'historial', id || idDia(h.dia)), data: h }));
+    (data.vacaciones || []).forEach(({ id, ...v }) => items.push({ ref: doc(db, 'vacaciones', id), data: v }));
+    await escribirEnLotes(items);
+    await setDoc(doc(db, 'config', 'estado'), data.estado || { dia: 0, vacManual: [], colasTurno: {} });
+    if (data.especial) await setDoc(doc(db, 'config', 'especial'), data.especial);
+    await setDoc(doc(db, 'config', 'meta'), { seeded: true, restaurado: Date.now() });
+  }
+};
+
+window.FB = FB;
+if (window.iniciarApp) window.iniciarApp();
+
+</script>
+</body>
+</html>

@@ -658,7 +658,7 @@
     <span class="dia-badge" id="estado-conexion">⏳ Conectando…</span>
     <span class="dia-badge" id="dia-badge">📅 Día 1</span>
     <button class="btn btn-primary" onclick="generarReparto()">⚡ Generar Reparto</button>
-    <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn btn-secondary" onclick="descargarRepartoImagen()">📥 Descargar reparto</button>
   </div>
 </header>
 
@@ -2261,6 +2261,201 @@ function imprimirRepartoEspecial() {
 }
 
 
+
+// ===================== DESCARGAR REPARTO COMO IMAGEN =====================
+// Dibuja "Línea de empaque" + "Puestos externos" en un PNG nítido (3x) y lo descarga.
+function rectRedondo(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function partirTexto(ctx, texto, maxAncho, maxLineas) {
+  const palabras = String(texto).split(' ');
+  const lineas = [];
+  let actual = '';
+  palabras.forEach(pal => {
+    const prueba = actual ? actual + ' ' + pal : pal;
+    if (!actual || ctx.measureText(prueba).width <= maxAncho) actual = prueba;
+    else { lineas.push(actual); actual = pal; }
+  });
+  if (actual) lineas.push(actual);
+  return lineas.slice(0, maxLineas);
+}
+
+// Íconos dibujados a mano (así no dependen de la fuente de emojis del celular)
+function dibujarIcono(ctx, tipo, x, y) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = '#2d7a3a';
+  ctx.strokeStyle = '#2d7a3a';
+  if (tipo === 'fabrica') {
+    ctx.beginPath();
+    ctx.moveTo(1, 22); ctx.lineTo(1, 10); ctx.lineTo(8, 14); ctx.lineTo(8, 10);
+    ctx.lineTo(15, 14); ctx.lineTo(15, 4); ctx.lineTo(21, 4); ctx.lineTo(21, 22);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#e8f5e9';
+    [[4, 17], [10, 17], [16, 17]].forEach(([a, b]) => ctx.fillRect(a, b, 3, 3));
+  } else {
+    ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(11, 4); ctx.lineTo(11, 20); ctx.stroke();        // poste
+    ctx.beginPath(); ctx.moveTo(6, 22); ctx.lineTo(16, 22); ctx.stroke();        // base
+    ctx.beginPath(); ctx.moveTo(2, 6); ctx.lineTo(20, 6); ctx.stroke();          // brazo
+    ctx.lineWidth = 1.4;
+    [3, 19].forEach(px => {
+      ctx.beginPath(); ctx.moveTo(px, 6); ctx.lineTo(px - 3, 13); ctx.moveTo(px, 6); ctx.lineTo(px + 3, 13); ctx.stroke();
+      ctx.beginPath(); ctx.arc(px, 13, 3.4, 0, Math.PI); ctx.closePath(); ctx.fill();
+    });
+  }
+  ctx.restore();
+}
+
+function dibujarRepartoPNG(asig) {
+  const S = 3;                  // nitidez: 3 píxeles por punto
+  const W = 920, PAD = 24, COLS = 5, GAP = 12, HEAD = 46, BODY = 18;
+  const FUENTE = 'Inter, "Segoe UI", Roboto, Arial, sans-serif';
+  const FTIT = '"Space Grotesk", Inter, "Segoe UI", Arial, sans-serif';
+  const hs = hombresVigentes();
+  const anchoSec = W - PAD * 2;
+  const anchoCard = (anchoSec - BODY * 2 - GAP * (COLS - 1)) / COLS;
+  const maxTexto = anchoCard - 24;
+  const estilos = {
+    normal:   { borde: '#c8e6c9', fondo: '#ffffff' },
+    pesado:   { borde: '#ef9a9a', fondo: '#fff5f5' },
+    fijo:     { borde: '#90caf9', fondo: '#f0f7ff' },
+    especial: { borde: '#ce93d8', fondo: '#faf0ff' },
+  };
+  const secciones = [
+    { icono: 'fabrica', titulo: 'Línea de empaque', puestos: PUESTOS_EMPAQUE },
+    { icono: 'balanza', titulo: 'Puestos externos', puestos: PUESTOS_EXTERNOS },
+  ];
+
+  // Primera pasada: medir textos para calcular alturas
+  const med = document.createElement('canvas').getContext('2d');
+  secciones.forEach(sec => {
+    sec.filas = [];
+    for (let i = 0; i < sec.puestos.length; i += COLS) {
+      const fila = sec.puestos.slice(i, i + COLS).map(pu => {
+        const persona = asig[pu.id] || null;
+        med.font = `700 16px ${FUENTE}`;
+        const lineas = persona ? partirTexto(med, persona, maxTexto, 2) : ['— Sin asignar —'];
+        // nombre del puesto: reducir fuente si no cabe
+        let fn = 11;
+        med.font = `700 ${fn}px ${FUENTE}`;
+        const nombre = pu.nombre.toUpperCase();
+        while (fn > 8 && med.measureText(nombre).width > maxTexto) { fn -= 0.5; med.font = `700 ${fn}px ${FUENTE}`; }
+        return { pu, persona, lineas, nombre, fn };
+      });
+      const maxL = Math.max(...fila.map(c => c.lineas.length));
+      sec.filas.push({ celdas: fila, alto: 40 + maxL * 20 });
+    }
+    sec.alto = HEAD + BODY * 2 + sec.filas.reduce((a, f) => a + f.alto, 0) + GAP * (sec.filas.length - 1);
+  });
+  const H = PAD * 2 + secciones.reduce((a, s) => a + s.alto, 0) + 18 * (secciones.length - 1);
+
+  // Segunda pasada: dibujar
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(W * S);
+  canvas.height = Math.round(H * S);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(S, S);
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#f5f9f5';
+  ctx.fillRect(0, 0, W, H);
+
+  let y = PAD;
+  secciones.forEach(sec => {
+    const x = PAD;
+    // tarjeta con sombra suave
+    ctx.save();
+    ctx.shadowColor = 'rgba(45,122,58,0.12)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+    ctx.fillStyle = '#ffffff';
+    rectRedondo(ctx, x, y, anchoSec, sec.alto, 12); ctx.fill();
+    ctx.restore();
+    // encabezado con degradé
+    ctx.save();
+    rectRedondo(ctx, x, y, anchoSec, sec.alto, 12); ctx.clip();
+    const g = ctx.createLinearGradient(x, 0, x + anchoSec, 0);
+    g.addColorStop(0, '#e8f5e9'); g.addColorStop(1, '#ffffff');
+    ctx.fillStyle = g; ctx.fillRect(x, y, anchoSec, HEAD);
+    ctx.fillStyle = '#c8e6c9'; ctx.fillRect(x, y + HEAD - 1.5, anchoSec, 1.5);
+    ctx.restore();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = '#c8e6c9';
+    rectRedondo(ctx, x + 0.75, y + 0.75, anchoSec - 1.5, sec.alto - 1.5, 12); ctx.stroke();
+    ctx.fillStyle = '#2d7a3a';
+    ctx.font = `700 17px ${FTIT}`;
+    dibujarIcono(ctx, sec.icono, x + 18, y + 12);
+    ctx.fillText(sec.titulo, x + 48, y + 29);
+
+    // filas de puestos
+    let fy = y + HEAD + BODY;
+    sec.filas.forEach(fila => {
+      fila.celdas.forEach((c, i) => {
+        const cx = x + BODY + i * (anchoCard + GAP);
+        const est = estilos[c.pu.tipo] || estilos.normal;
+        ctx.fillStyle = est.fondo; rectRedondo(ctx, cx, fy, anchoCard, fila.alto, 9); ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = est.borde;
+        rectRedondo(ctx, cx + 1, fy + 1, anchoCard - 2, fila.alto - 2, 8); ctx.stroke();
+        ctx.fillStyle = '#546e7a';
+        ctx.font = `700 ${c.fn}px ${FUENTE}`;
+        ctx.fillText(c.nombre, cx + 12, fy + 24);
+        if (c.persona) {
+          ctx.fillStyle = hs.includes(c.persona) ? '#1565c0' : '#ad1457';
+          ctx.font = `700 16px ${FUENTE}`;
+        } else {
+          ctx.fillStyle = '#f57c00';
+          ctx.font = `italic 500 15px ${FUENTE}`;
+        }
+        c.lineas.forEach((l, k) => ctx.fillText(l, cx + 12, fy + 46 + k * 20));
+      });
+      fy += fila.alto + GAP;
+    });
+    y += sec.alto + 18;
+  });
+
+  return new Promise((res, rej) => {
+    canvas.toBlob(b => b ? res(b) : rej(new Error('No se pudo crear la imagen')), 'image/png');
+  });
+}
+
+async function entregarImagen(blob, nombre) {
+  const esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (esIOS && typeof File === 'function' && navigator.canShare && navigator.share) {
+    // En iPhone el "descargar" directo no guarda bien: se abre la hoja de compartir (Guardar imagen / WhatsApp)
+    try {
+      const file = new File([blob], nombre, { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Reparto' }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  mostrarNotif('📥 Reparto descargado como imagen.');
+}
+
+async function descargarRepartoImagen() {
+  const ult = estado.historial[estado.historial.length - 1];
+  if (!ult) { mostrarNotifError('⚠️ Primero genera un reparto para poder descargarlo.'); return; }
+  try {
+    if (document.fonts && document.fonts.load) {
+      // esperar (máx. 1.5 s) a que carguen las tipografías para que la imagen salga igual que la pantalla
+      await Promise.race([
+        Promise.all([document.fonts.load('700 16px Inter'), document.fonts.load('500 15px Inter'), document.fonts.load('700 17px "Space Grotesk"')]),
+        new Promise(r => setTimeout(r, 1500))
+      ]);
+    }
+    const blob = await dibujarRepartoPNG(ult.asignaciones || {});
+    await entregarImagen(blob, `reparto-dia-${ult.dia}-${hoyISO()}.png`);
+  } catch (e) {
+    console.error(e);
+    mostrarNotifError('⚠️ No se pudo crear la imagen: ' + (e.message || e));
+  }
+}
 
 // ===================== RENDER GENERAL =====================
 function renderTodo() {
